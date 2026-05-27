@@ -7,5 +7,7 @@ export interface PublicPortfolioItem {
   content_type: ContentType[]; ai_used: boolean;
   video_url: string | null; thumbnail: string | null;
   industry: string; format_concept: string[]; mood: string[]; keywords: string[];
-  search_summary: string; _ai_confidence: "estimated";
+  search_summary: string;
+  visual_style: string[]; color_tone: string[]; animation_type: string[]; creative_direction: string[];
+  _ai_confidence: "estimated";
 }

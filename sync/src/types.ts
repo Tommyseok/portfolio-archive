@@ -23,6 +23,11 @@ export interface AiFields {
   mood: string[];
   keywords: string[];
   search_summary: string;
+  // 비전 기반 크리에이티브 라벨 (썸네일 이미지 분석)
+  visual_style: string[];     // 예: ["미니멀", "시네마틱"]
+  color_tone: string[];       // 예: ["웜톤", "비비드"]
+  animation_type: string[];   // 예: ["3D", "모션그래픽"]
+  creative_direction: string[]; // 예: ["브랜드스토리", "제품쇼케이스"]
   _ai_confidence: "estimated";
 }
 

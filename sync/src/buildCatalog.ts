@@ -69,6 +69,10 @@ async function main(): Promise<void> {
         mood: existing!.mood,
         keywords: existing!.keywords,
         search_summary: existing!.search_summary,
+        visual_style: existing!.visual_style ?? [],
+        color_tone: existing!.color_tone ?? [],
+        animation_type: existing!.animation_type ?? [],
+        creative_direction: existing!.creative_direction ?? [],
         _ai_confidence: "estimated" as const,
       };
       reused++;
@@ -79,6 +83,10 @@ async function main(): Promise<void> {
         mood: [] as string[],
         keywords: [] as string[],
         search_summary: "",
+        visual_style: [] as string[],
+        color_tone: [] as string[],
+        animation_type: [] as string[],
+        creative_direction: [] as string[],
         _ai_confidence: "estimated" as const,
       };
       skipped++;
