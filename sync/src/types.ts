@@ -18,16 +18,18 @@ export interface ParsedFields {
 }
 
 export interface AiFields {
-  industry: string;
-  format_concept: string[];
-  mood: string[];
-  keywords: string[];
-  search_summary: string;
-  // 비전 기반 크리에이티브 라벨 (썸네일 이미지 분석)
-  visual_style: string[];     // 예: ["미니멀", "시네마틱"]
-  color_tone: string[];       // 예: ["웜톤", "비비드"]
-  animation_type: string[];   // 예: ["3D", "모션그래픽"]
-  creative_direction: string[]; // 예: ["브랜드스토리", "제품쇼케이스"]
+  // 기본 분류
+  industry: string;            // 업종
+  keywords: string[];          // 검색 키워드 (셀럽, 제품, 소재 등)
+  search_summary: string;      // 한 문장 요약
+
+  // AE 세일즈 핵심 라벨 (썸네일+텍스트 분석)
+  platform: string[];          // 집행 매체: 유튜브, 인스타그램, TV 등
+  campaign_objective: string[]; // 캠페인 목적: 신제품론칭, 브랜드인지 등
+  target_audience: string[];   // 타겟 고객층: MZ세대, 3040 등
+  production_type: string[];   // 제작방식: 실사촬영, 3D, 모션그래픽 등
+  visual_mood: string[];       // 비주얼 무드: 감성/따뜻한, 역동적 등
+
   _ai_confidence: "estimated";
 }
 

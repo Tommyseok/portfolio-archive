@@ -29,51 +29,54 @@ describe("buildClassifyPrompt", () => {
     expect(prompt).toContain("선세럼 모델 촬영 메이킹필름 제작");
   });
 
-  it("통제 어휘(포맷/업종) 용어를 포함한다", () => {
+  it("AE 세일즈 라벨 항목(매체/캠페인목적/타겟)을 포함한다", () => {
     const prompt = buildClassifyPrompt(makeParsed());
-    // FORMATS 의 한 항목
-    expect(prompt).toContain("인터뷰형");
-    // INDUSTRIES 의 한 항목
+    expect(prompt).toContain("유튜브");
+    expect(prompt).toContain("신제품론칭");
+    expect(prompt).toContain("MZ세대");
     expect(prompt).toContain("뷰티");
   });
 });
 
 describe("parseClassifyResponse", () => {
-  it("```json 펜스로 감싼 응답에서 필드를 추출한다", () => {
-    const text =
-      '```json\n{"industry":"뷰티","format_concept":["메이킹필름"],"mood":["감성"],"keywords":["선케어"],"search_summary":"요약"}\n```';
+  it("새 AE 필드 스키마를 파싱한다", () => {
+    const text = '```json\n{"industry":"뷰티","platform":["인스타그램"],"campaign_objective":["신제품론칭"],"target_audience":["2030여성"],"production_type":["실사촬영"],"visual_mood":["감성/따뜻한"],"keywords":["선케어"],"search_summary":"선세럼 신제품 인스타 광고"}\n```';
     const ai = parseClassifyResponse(text);
     expect(ai.industry).toBe("뷰티");
-    expect(ai.format_concept).toEqual(["메이킹필름"]);
-    expect(ai.mood).toEqual(["감성"]);
+    expect(ai.platform).toEqual(["인스타그램"]);
+    expect(ai.campaign_objective).toEqual(["신제품론칭"]);
+    expect(ai.target_audience).toEqual(["2030여성"]);
+    expect(ai.production_type).toEqual(["실사촬영"]);
+    expect(ai.visual_mood).toEqual(["감성/따뜻한"]);
     expect(ai.keywords).toEqual(["선케어"]);
-    expect(ai.search_summary).toBe("요약");
+    expect(ai.search_summary).toBe("선세럼 신제품 인스타 광고");
     expect(ai._ai_confidence).toBe("estimated");
   });
 
   it("펜스 없는 순수 JSON 입력도 동작한다", () => {
-    const text =
-      '{"industry":"식품","format_concept":["제품소개형"],"mood":["정보전달"],"keywords":["간편식"],"search_summary":"식품 요약"}';
+    const text = '{"industry":"식품/음료","platform":["유튜브"],"campaign_objective":["브랜드인지"],"target_audience":["전연령"],"production_type":["모션그래픽"],"visual_mood":["유머러스"],"keywords":["간편식"],"search_summary":"식품 요약"}';
     const ai = parseClassifyResponse(text);
-    expect(ai.industry).toBe("식품");
-    expect(ai.format_concept).toEqual(["제품소개형"]);
+    expect(ai.industry).toBe("식품/음료");
+    expect(ai.platform).toEqual(["유튜브"]);
     expect(ai._ai_confidence).toBe("estimated");
   });
 
   it("주변 산문이 있어도 JSON 객체를 추출한다", () => {
-    const text =
-      '분류 결과는 다음과 같습니다.\n```json\n{"industry":"헬스케어","format_concept":["인터뷰형"],"mood":["진정성"],"keywords":["건강"],"search_summary":"헬스 요약"}\n```\n이상입니다.';
+    const text = '분류 결과:\n```json\n{"industry":"헬스케어/제약","platform":["TV/OTT"],"campaign_objective":["브랜드인지"],"target_audience":["4050이상"],"production_type":["실사촬영"],"visual_mood":["세련된/럭셔리"],"keywords":["건강"],"search_summary":"헬스 요약"}\n```';
     const ai = parseClassifyResponse(text);
-    expect(ai.industry).toBe("헬스케어");
-    expect(ai.format_concept).toEqual(["인터뷰형"]);
+    expect(ai.industry).toBe("헬스케어/제약");
+    expect(ai.platform).toEqual(["TV/OTT"]);
   });
 
   it("누락 필드는 안전하게 기본값으로 채운다", () => {
     const text = '{"search_summary":"부분 응답"}';
     const ai = parseClassifyResponse(text);
     expect(ai.industry).toBe("기타");
-    expect(ai.format_concept).toEqual([]);
-    expect(ai.mood).toEqual([]);
+    expect(ai.platform).toEqual([]);
+    expect(ai.campaign_objective).toEqual([]);
+    expect(ai.target_audience).toEqual([]);
+    expect(ai.production_type).toEqual([]);
+    expect(ai.visual_mood).toEqual([]);
     expect(ai.keywords).toEqual([]);
     expect(ai.search_summary).toBe("부분 응답");
     expect(ai._ai_confidence).toBe("estimated");

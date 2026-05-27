@@ -6,8 +6,14 @@ export interface PublicPortfolioItem {
   in_house: boolean | null; piece_count: number | null;
   content_type: ContentType[]; ai_used: boolean;
   video_url: string | null; thumbnail: string | null;
-  industry: string; format_concept: string[]; mood: string[]; keywords: string[];
+  // AI 분류 필드
+  industry: string;
+  platform: string[];
+  campaign_objective: string[];
+  target_audience: string[];
+  production_type: string[];
+  visual_mood: string[];
+  keywords: string[];
   search_summary: string;
-  visual_style: string[]; color_tone: string[]; animation_type: string[]; creative_direction: string[];
   _ai_confidence: "estimated";
 }

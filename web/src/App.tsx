@@ -7,7 +7,7 @@ import { SearchBar } from "./components/SearchBar";
 import { StatsPanel } from "./components/StatsPanel";
 import { DetailModal } from "./components/DetailModal";
 
-const emptyFilters: Filters = { industry: [], format_concept: [], mood: [], content_type: [], ai_used: null, year_month: [], client: [] };
+const emptyFilters: Filters = { industry: [], platform: [], campaign_objective: [], target_audience: [], production_type: [], visual_mood: [], content_type: [], ai_used: null, year_month: [], client: [] };
 
 export default function App() {
   const [all, setAll] = useState<PublicPortfolioItem[]>([]);
@@ -34,8 +34,8 @@ export default function App() {
   async function onSearch(q: string) {
     setLoading(true); setKw(q); setSearchIds(null);
     try {
-      const items = all.map(({ id, client, project_title, search_summary, keywords, format_concept, mood, industry }) =>
-        ({ id, client, project_title, search_summary, keywords, format_concept, mood, industry }));
+      const items = all.map(({ id, client, project_title, search_summary, keywords, platform, campaign_objective, target_audience, production_type, visual_mood, industry }) =>
+        ({ id, client, project_title, search_summary, keywords, platform, campaign_objective, target_audience, production_type, visual_mood, industry }));
       const res = await fetch("/api/search", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ query: q, items }) });
       if (res.ok) setSearchIds((await res.json()).ids ?? []);
     } catch { /* 키워드 폴백 유지 */ }

@@ -65,28 +65,26 @@ async function main(): Promise<void> {
     if (unchanged) {
       ai = {
         industry: existing!.industry,
-        format_concept: existing!.format_concept,
-        mood: existing!.mood,
+        platform: (existing as any).platform ?? [],
+        campaign_objective: (existing as any).campaign_objective ?? [],
+        target_audience: (existing as any).target_audience ?? [],
+        production_type: (existing as any).production_type ?? [],
+        visual_mood: (existing as any).visual_mood ?? [],
         keywords: existing!.keywords,
         search_summary: existing!.search_summary,
-        visual_style: existing!.visual_style ?? [],
-        color_tone: existing!.color_tone ?? [],
-        animation_type: existing!.animation_type ?? [],
-        creative_direction: existing!.creative_direction ?? [],
         _ai_confidence: "estimated" as const,
       };
       reused++;
     } else if (SKIP_CLASSIFY) {
       ai = {
         industry: UNCLASSIFIED,
-        format_concept: [] as string[],
-        mood: [] as string[],
+        platform: [] as string[],
+        campaign_objective: [] as string[],
+        target_audience: [] as string[],
+        production_type: [] as string[],
+        visual_mood: [] as string[],
         keywords: [] as string[],
         search_summary: "",
-        visual_style: [] as string[],
-        color_tone: [] as string[],
-        animation_type: [] as string[],
-        creative_direction: [] as string[],
         _ai_confidence: "estimated" as const,
       };
       skipped++;
