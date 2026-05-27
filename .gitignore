@@ -9,3 +9,5 @@ sync/test/fixtures/sample-presentation.json
 .vercel
 web/dist
 web/node_modules
+web/public/catalog.public.json
+web/public/thumbnails/
