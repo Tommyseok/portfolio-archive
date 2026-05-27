@@ -75,3 +75,31 @@ export async function fetchPresentation(presentationId: string) {
   const res = await slides.presentations.get({ presentationId });
   return res.data; // Schema$Presentation
 }
+
+/**
+ * 주어진 슬라이드를 PNG 로 렌더링해 로컬에 저장하고, data/ 기준 상대 경로를 반환한다.
+ * - 반환 경로: thumbnails/<slideObjectId>.png (카탈로그 항목이 저장하고 웹앱이 서빙할 값)
+ * - 실제 파일: <outDir>/<slideObjectId>.png (기본 data/thumbnails/<id>.png)
+ */
+export async function downloadThumbnail(
+  presentationId: string,
+  slideObjectId: string,
+  outDir = "data/thumbnails",
+): Promise<string> {
+  const auth = await getAuth();
+  const slides = google.slides({ version: "v1", auth: auth as OAuth2Client });
+  const thumb = await slides.presentations.pages.getThumbnail({
+    presentationId,
+    pageObjectId: slideObjectId,
+    "thumbnailProperties.mimeType": "PNG",
+    "thumbnailProperties.thumbnailSize": "MEDIUM",
+  });
+  const url = thumb.data.contentUrl!;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`thumbnail fetch failed: ${res.status}`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  fs.mkdirSync(outDir, { recursive: true });
+  const rel = `thumbnails/${slideObjectId}.png`;
+  fs.writeFileSync(path.join(outDir, `${slideObjectId}.png`), buf);
+  return rel;
+}
