@@ -81,11 +81,31 @@ export async function fetchPresentation(presentationId: string) {
  * - 반환 경로: thumbnails/<slideObjectId>.png (카탈로그 항목이 저장하고 웹앱이 서빙할 값)
  * - 실제 파일: <outDir>/<slideObjectId>.png (기본 data/thumbnails/<id>.png)
  */
+/**
+ * Google Slides API 분당 "Expensive read requests" 한도 준수를 위한 딜레이.
+ * 기본 2.5초 → 분당 최대 24회 (한도 30회의 80% 수준으로 안전하게 유지).
+ */
+const THUMB_DELAY_MS = Number(process.env.THUMB_DELAY_MS ?? 2500);
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 export async function downloadThumbnail(
   presentationId: string,
   slideObjectId: string,
   outDir = "data/thumbnails",
 ): Promise<string> {
+  fs.mkdirSync(outDir, { recursive: true });
+  const filePath = path.join(outDir, `${slideObjectId}.png`);
+  const rel = `thumbnails/${slideObjectId}.png`;
+
+  // 이미 다운로드된 썸네일은 API 재호출 없이 캐시에서 반환
+  if (fs.existsSync(filePath)) return rel;
+
+  // API 호출 전 딜레이 (분당 할당량 초과 방지)
+  await sleep(THUMB_DELAY_MS);
+
   const auth = await getAuth();
   const slides = google.slides({ version: "v1", auth: auth as OAuth2Client });
   const thumb = await slides.presentations.pages.getThumbnail({
@@ -98,8 +118,6 @@ export async function downloadThumbnail(
   const res = await fetch(url);
   if (!res.ok) throw new Error(`thumbnail fetch failed: ${res.status}`);
   const buf = Buffer.from(await res.arrayBuffer());
-  fs.mkdirSync(outDir, { recursive: true });
-  const rel = `thumbnails/${slideObjectId}.png`;
-  fs.writeFileSync(path.join(outDir, `${slideObjectId}.png`), buf);
+  fs.writeFileSync(filePath, buf);
   return rel;
 }
