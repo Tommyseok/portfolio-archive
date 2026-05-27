@@ -69,6 +69,12 @@ portfolio-archive/
 
 이 Task는 spec의 "구현 전 검증 미지수 1~3"을 해소한다. **이 Task가 통과해야 나머지가 의미 있다.**
 
+> **구현 갱신(2026-05-27):** 인증은 oob/readline 붙여넣기 대신 `@google-cloud/local-auth`의
+> 설치형 앱 loopback 플로우로 구현됨(oob 폐기 대응). 사용자는 Google Cloud에서 OAuth
+> 데스크톱 클라이언트 JSON을 받아 프로젝트 루트에 `credentials.json`으로 저장하고, 최초 1회
+> `npm run dump`를 **본인 터미널에서** 실행해 브라우저 인증 → `token.json` 캐시. 이후 호출은
+> 비대화형. `.env`에는 `PRESENTATION_ID`, `ANTHROPIC_API_KEY`만 둔다(Google 키는 파일 기반).
+
 **Files:**
 - Create: `package.json`, `.gitignore`, `.env.example`, `sync/src/slidesClient.ts`, `sync/scripts/dump-presentation.ts`
 
