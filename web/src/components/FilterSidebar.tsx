@@ -43,7 +43,7 @@ export function FilterSidebar({ items, filters, setFilters }: { items: PublicPor
         </button>
       )}
 
-      <Group title="업종" options={uniq(items.map((i) => i.industry).filter(v => v && v !== "미분류"))} selected={filters.industry} onToggle={(v) => toggle("industry", v)} />
+      <Group title="업종" options={uniq(items.map((i) => i.industry).filter(v => v && v !== "미분류"))} selected={filters.industry} onToggle={(v) => toggle("industry", v)} pending />
       <Group title="매체 / 플랫폼" options={uniq(items.flatMap((i) => i.platform ?? []))} selected={filters.platform} onToggle={(v) => toggle("platform", v)} pending />
       <Group title="캠페인 목적" options={uniq(items.flatMap((i) => i.campaign_objective ?? []))} selected={filters.campaign_objective} onToggle={(v) => toggle("campaign_objective", v)} pending />
       <Group title="타겟 고객층" options={uniq(items.flatMap((i) => i.target_audience ?? []))} selected={filters.target_audience} onToggle={(v) => toggle("target_audience", v)} pending />
