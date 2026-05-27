@@ -1,0 +1,48 @@
+name: Sync & Deploy
+
+on:
+  schedule:
+    # 매일 오전 9시 KST (= UTC 00:00)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 수동 실행 버튼
+
+jobs:
+  sync-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Write Google credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
+          echo '${{ secrets.GOOGLE_TOKEN }}' > token.json
+
+      - name: Run sync (fetch + AI classify)
+        env:
+          PRESENTATION_ID: ${{ secrets.PRESENTATION_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run sync
+
+      - name: Build web
+        run: |
+          npm run web:data
+          cd web && npm install && npm run build
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: npx vercel --prod --token $VERCEL_TOKEN
