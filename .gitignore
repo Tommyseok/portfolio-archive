@@ -3,6 +3,8 @@ node_modules/
 credentials.json
 token.json
 data/catalog.internal.json
+sync/test/fixtures/sample-presentation.json
+.dl/
 *.log
 .vercel
 web/dist
