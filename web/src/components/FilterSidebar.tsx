@@ -44,11 +44,11 @@ export function FilterSidebar({ items, filters, setFilters }: { items: PublicPor
       )}
 
       <Group title="업종" options={uniq(items.map((i) => i.industry).filter(v => v && v !== "미분류"))} selected={filters.industry} onToggle={(v) => toggle("industry", v)} />
-      <Group title="매체 / 플랫폼" options={uniq(items.flatMap((i) => i.platform))} selected={filters.platform} onToggle={(v) => toggle("platform", v)} pending />
-      <Group title="캠페인 목적" options={uniq(items.flatMap((i) => i.campaign_objective))} selected={filters.campaign_objective} onToggle={(v) => toggle("campaign_objective", v)} pending />
-      <Group title="타겟 고객층" options={uniq(items.flatMap((i) => i.target_audience))} selected={filters.target_audience} onToggle={(v) => toggle("target_audience", v)} pending />
-      <Group title="제작 방식" options={uniq(items.flatMap((i) => i.production_type))} selected={filters.production_type} onToggle={(v) => toggle("production_type", v)} pending />
-      <Group title="비주얼 무드" options={uniq(items.flatMap((i) => i.visual_mood))} selected={filters.visual_mood} onToggle={(v) => toggle("visual_mood", v)} pending />
+      <Group title="매체 / 플랫폼" options={uniq(items.flatMap((i) => i.platform ?? []))} selected={filters.platform} onToggle={(v) => toggle("platform", v)} pending />
+      <Group title="캠페인 목적" options={uniq(items.flatMap((i) => i.campaign_objective ?? []))} selected={filters.campaign_objective} onToggle={(v) => toggle("campaign_objective", v)} pending />
+      <Group title="타겟 고객층" options={uniq(items.flatMap((i) => i.target_audience ?? []))} selected={filters.target_audience} onToggle={(v) => toggle("target_audience", v)} pending />
+      <Group title="제작 방식" options={uniq(items.flatMap((i) => i.production_type ?? []))} selected={filters.production_type} onToggle={(v) => toggle("production_type", v)} pending />
+      <Group title="비주얼 무드" options={uniq(items.flatMap((i) => i.visual_mood ?? []))} selected={filters.visual_mood} onToggle={(v) => toggle("visual_mood", v)} pending />
       <Group title="콘텐츠 종류" options={uniq(items.flatMap((i) => i.content_type))} selected={filters.content_type} onToggle={(v) => toggle("content_type", v)} />
       <Group title="광고주" options={uniq(items.map((i) => i.client))} selected={filters.client} onToggle={(v) => toggle("client", v)} />
       <Group title="제작월" options={uniq(items.map((i) => i.year_month ?? "")).filter(Boolean)} selected={filters.year_month} onToggle={(v) => toggle("year_month", v)} />
