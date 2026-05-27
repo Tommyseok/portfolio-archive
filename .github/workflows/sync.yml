@@ -5,6 +5,11 @@ on:
     # 매일 오전 9시 KST (= UTC 00:00)
     - cron: '0 0 * * *'
   workflow_dispatch: # 수동 실행 버튼
+    inputs:
+      skip_classify:
+        description: 'AI 분류 건너뛰기 (1=건너뜀, 0=분류)'
+        required: false
+        default: '0'
 
 jobs:
   sync-deploy:
@@ -33,6 +38,7 @@ jobs:
         env:
           PRESENTATION_ID: ${{ secrets.PRESENTATION_ID }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SKIP_CLASSIFY: ${{ github.event.inputs.skip_classify || '0' }}
         run: npm run sync
 
       - name: Build web
