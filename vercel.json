@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "outputDirectory": "web/dist",
+  "installCommand": "npm install",
+  "functions": {
+    "api/search.ts": { "memory": 512, "maxDuration": 30 }
+  }
+}

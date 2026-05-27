@@ -7,7 +7,6 @@ sync/test/fixtures/sample-presentation.json
 .dl/
 *.log
 .vercel
-web/dist
 web/node_modules
 web/public/catalog.public.json
 web/public/thumbnails/
