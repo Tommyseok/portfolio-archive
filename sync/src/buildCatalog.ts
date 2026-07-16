@@ -7,7 +7,7 @@ dotenv.config({ override: true }); // 셸에 빈 ANTHROPIC_API_KEY가 있어도 
 import * as fs from "node:fs";
 import { fetchPresentation, downloadThumbnail } from "./slidesClient.js";
 import { parseSlide, isProjectSlide } from "./parseSlide.js";
-import { parseDsSlides, parseMsSlides } from "./parseDeck.js";
+import { parseDsSlides, parseMsSlides, slideImages } from "./parseDeck.js";
 import { loadMaster, buildResolver } from "./advertiserMaster.js";
 import { downloadSlideAssets } from "./assetDownloader.js";
 import { classify } from "./classify.js";
@@ -74,6 +74,7 @@ async function main(): Promise<void> {
       const parsed = parseSlide(slide);
       const derived = resolver.resolve(parsed.client);
       const thumbnail = await downloadThumbnail(DECKS.PD, slideId);
+      const asset_images = await downloadSlideAssets("PD-", slideId, slideImages(slide));
       items.push({
         id: `pd-${slug(derived.client, parsed.project_title, slideId)}`,
         source_team: "PD",
@@ -88,7 +89,7 @@ async function main(): Promise<void> {
         tools: [],
         team: null,
         video_urls: parsed.video_url ? [parsed.video_url] : [],
-        asset_images: [],
+        asset_images,
         thumbnail,
         ai_used: parsed.ai_used,
         period_start: parsed.period_start,
