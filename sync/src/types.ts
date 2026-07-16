@@ -59,6 +59,7 @@ export interface UnifiedItem extends DerivedFields, AiFields {
   media_type: string | null;  // 소재타입 대분류 (영상/이미지/인터랙티브/옥외·Ambient/IMC)
   format: string | null;      // 소재타입 세부 (숏폼/배너/스틸·화보 등)
   content_type: ContentType[];
+  production_method: string | null; // 제작방식 (실촬영/AI 등)
   tools: string[];            // DS: TOOL (GPT, 미드저니 등)
   team: string | null;        // DS: TEAM (DS1팀 등)
   video_urls: string[];

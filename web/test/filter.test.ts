@@ -10,7 +10,7 @@ const item = (over: Partial<Item>): Item => ({
   advertiser_status: "confirmed", is_bidding: false,
   title: "선케어", overview: "양현종 메이킹", year_month: "2026-04",
   media_type: "Video production", format: "Short form",
-  content_type: ["촬영숏폼"], tools: [], team: null,
+  content_type: ["촬영숏폼"], production_method: "실촬영", tools: [], team: null,
   video_urls: ["u"], asset_images: [], thumbnail: "t", ai_used: false,
   period_start: null, period_end: null, in_house: true, piece_count: 1,
   appeal_points: ["감성/브랜드"], keywords: ["선케어", "양현종"],

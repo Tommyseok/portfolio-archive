@@ -49,13 +49,13 @@ export function Directory({ items, staff, ready }: { items: Item[]; staff: boole
       <h1 style={{ fontSize: 30, letterSpacing: "-0.04em", margin: "10px 0 4px" }}>Directory</h1>
       <p style={{ color: "var(--ink-2)", marginTop: 0 }}>제작 조직·광고주·크리에이터 기준으로 소재를 모아봅니다. 카드를 누르면 Explore로 이동합니다.</p>
 
-      <Section title="제작 소스" rows={teams}
+      <Section title="제작팀" rows={teams}
         sub={(n) => SOURCE_TEAM_LABELS[n as keyof typeof SOURCE_TEAM_LABELS] ?? n}
         onGo={(n) => nav(`/explore?team=${encodeURIComponent(n)}`)} />
 
       {subTeams.length > 0 && (
         <Section title="세부 팀" rows={subTeams} sub={() => "제작팀"}
-          onGo={(n) => nav(`/explore?creator=${encodeURIComponent(n)}`)} />
+          onGo={(n) => nav(`/explore?subteam=${encodeURIComponent(n)}`)} />
       )}
 
       <Section title="광고주" rows={clients}

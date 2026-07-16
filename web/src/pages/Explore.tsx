@@ -25,12 +25,14 @@ export function Explore({ items, loading, filters, setFilters, staff, ready, ema
   useEffect(() => {
     const client = params.get("client");
     const team = params.get("team");
+    const subteam = params.get("subteam");
     const creator = params.get("creator");
-    if (client || team || creator) {
+    if (client || team || subteam || creator) {
       setFilters({
         ...filters,
         client: client ? [client] : filters.client,
         source_team: team ? [team] : filters.source_team,
+        team: subteam ? [subteam] : filters.team,
         q: creator ?? filters.q,
       });
       setParams({}, { replace: true });

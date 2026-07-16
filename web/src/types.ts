@@ -22,6 +22,7 @@ export interface Item {
   media_type: string | null;   // 소재타입 대분류 (영상/이미지/인터랙티브/옥외·Ambient/IMC)
   format: string | null;       // 소재타입 세부 (숏폼/배너/…)
   content_type: ContentType[]; // (구 축 — 파이프라인 원본, UI 미사용)
+  production_method: string | null; // 제작방식 (실촬영/그래픽디자인/AI/AI 하이브리드/3D·CG)
   tools: string[];
   team: string | null;
   video_urls: string[];
@@ -57,6 +58,9 @@ export const MEDIA_TAXONOMY: Record<string, string[]> = {
   "IMC": ["OOH", "Popup", "Event"],
   "Content design": ["Social", "Blog"],
 };
+
+/** 제작방식 축 — 0건도 필터에 항상 노출 */
+export const PRODUCTION_METHODS = ["실촬영", "그래픽디자인", "AI", "AI 하이브리드", "3D/CG"] as const;
 
 /** 필터용 복합 키 — 옥외>영상처럼 리프명이 겹쳐도 유일 */
 export const formatKey = (media: string | null, format: string | null) =>

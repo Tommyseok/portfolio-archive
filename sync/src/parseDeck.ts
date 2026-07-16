@@ -82,7 +82,7 @@ export function parseDsSlides(slides: Slide[]): DsParsed[] {
       source_slide_id: s.objectId ?? "",
       client_raw: client,
       year_month: parseKoreanMonth(kv["DATE"]),
-      team: kv["TEAM"] || null,
+      team: (kv["TEAM"] || "").replace(/\s+/g, "") || null,
       tools: (kv["TOOL"] ?? "").split(/[,+/·]/).map((t) => t.trim()).filter(Boolean),
       use: kv["USE"] ?? "",
       images: slideImages(s),
