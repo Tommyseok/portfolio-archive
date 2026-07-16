@@ -95,10 +95,12 @@ export async function downloadThumbnail(
   presentationId: string,
   slideObjectId: string,
   outDir = "data/thumbnails",
+  // 덱 간 objectId 충돌 방지용 파일명 접두사 (예: "DS-"). PD는 기존 캐시 유지 위해 빈 값.
+  prefix = "",
 ): Promise<string> {
   fs.mkdirSync(outDir, { recursive: true });
-  const filePath = path.join(outDir, `${slideObjectId}.png`);
-  const rel = `thumbnails/${slideObjectId}.png`;
+  const filePath = path.join(outDir, `${prefix}${slideObjectId}.png`);
+  const rel = `thumbnails/${prefix}${slideObjectId}.png`;
 
   // 이미 다운로드된 썸네일은 API 재호출 없이 캐시에서 반환
   if (fs.existsSync(filePath)) return rel;

@@ -10,3 +10,9 @@ sync/test/fixtures/sample-presentation.json
 web/node_modules
 web/public/catalog.public.json
 web/public/thumbnails/
+
+.vercel
+
+sync/test/fixtures/DS-presentation.json
+sync/test/fixtures/MS-presentation.json
+data/ms-dropbox-2024.sql

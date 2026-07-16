@@ -14,7 +14,8 @@ on:
 jobs:
   sync-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # 3개 덱 썸네일(563장+)을 매번 새로 받으므로 여유 있게
+    timeout-minutes: 60
 
     steps:
       - name: Checkout

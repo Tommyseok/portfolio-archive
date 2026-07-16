@@ -1,6 +1,17 @@
 // sync/src/types.ts
-export type ContentType = "촬영숏폼" | "스틸사진" | "AI영상";
+// 통합 크리덴셜 스키마 (2026-07 개편):
+// - 광고주/업종/유형은 advertiser-master.json 에서 파생 (정확)
+// - 소구포인트(appeal_points)만 AI 추정 — _ai_confidence 로 구분 표시
+export type SourceTeam = "PD" | "DS" | "MS";
 
+export type ContentType =
+  | "촬영숏폼"
+  | "스틸사진"
+  | "AI영상"
+  | "AI이미지"
+  | "모션그래픽";
+
+/** PD 덱 슬라이드에서 직접 파싱되는 필드 (정확도: 정확) */
 export interface ParsedFields {
   client: string;
   project_title: string;
@@ -17,26 +28,58 @@ export interface ParsedFields {
   thumbnail: string | null;    // 상대경로
 }
 
-export interface AiFields {
-  // 기본 분류
-  industry: string;            // 업종
-  keywords: string[];          // 검색 키워드 (셀럽, 제품, 소재 등)
-  search_summary: string;      // 한 문장 요약
-
-  // AE 세일즈 핵심 라벨 (썸네일+텍스트 분석)
-  platform: string[];          // 집행 매체: 유튜브, 인스타그램, TV 등
-  campaign_objective: string[]; // 캠페인 목적: 신제품론칭, 브랜드인지 등
-  target_audience: string[];   // 타겟 고객층: MZ세대, 3040 등
-  production_type: string[];   // 제작방식: 실사촬영, 3D, 모션그래픽 등
-  visual_mood: string[];       // 비주얼 무드: 감성/따뜻한, 역동적 등
-
-  _ai_confidence: "estimated";
+/** 광고주 마스터(정기회의시트 스냅샷)에서 파생되는 필드 (정확도: 정확) */
+export interface DerivedFields {
+  client: string;             // 마스터 대표 광고주명 (미매칭 시 정규화된 원문)
+  client_raw: string;         // 덱 원문 표기
+  client_matched: boolean;
+  industry: string | null;            // 업종 (시트 N열 어휘)
+  category_group: string | null;      // 대분류 (소비재/금융·서비스/디지털·콘텐츠)
+  advertiser_type: string | null;     // 유형 (브랜드/서비스 | 플랫폼, 시트 O열)
+  advertiser_status: "confirmed" | "proposed" | "unknown" | "unmatched";
+  is_bidding: boolean;        // 비딩 제안용 여부
 }
 
-export interface PortfolioItem extends ParsedFields, AiFields {
+/** AI 추정 필드 (정확도: 추정 — UI에서 배지 표시) */
+export interface AiFields {
+  appeal_points: string[];    // 소구포인트: 주 1 + 보조 최대 1 (APPEAL_POINTS 어휘)
+  keywords: string[];
+  search_summary: string;
+  _ai_confidence: "estimated" | null; // null = 아직 미분류
+}
+
+/** 3개 덱 공통 통합 아이템 */
+export interface UnifiedItem extends DerivedFields, AiFields {
   id: string;
+  source_team: SourceTeam;
   source_slide_id: string;
+  title: string;              // PD: 프로젝트명 / DS·MS: "광고주 + USE/특이사항" 요약
+  overview: string;           // PD: 개요 / DS: USE / MS: 특이사항
+  year_month: string | null;
+  content_type: ContentType[];
+  tools: string[];            // DS: TOOL (GPT, 미드저니 등)
+  team: string | null;        // DS: TEAM (DS1팀 등)
+  video_urls: string[];
+  thumbnail: string | null;
+  ai_used: boolean;
+  // PD 전용 (타 소스는 null)
+  period_start: string | null;
+  period_end: string | null;
+  in_house: boolean | null;
+  piece_count: number | null;
+  billing_amount: number | null; // ⚠ 민감 — 공개본 제외
 }
 
 // 공개용: billing_amount 제거
+export type PublicItem = Omit<UnifiedItem, "billing_amount">;
+
+// (구 스키마 호환용 — 웹 마이그레이션 후 제거 예정)
+export interface PortfolioItem extends ParsedFields {
+  id: string;
+  source_slide_id: string;
+  industry: string;
+  keywords: string[];
+  search_summary: string;
+  _ai_confidence: "estimated";
+}
 export type PublicPortfolioItem = Omit<PortfolioItem, "billing_amount">;
