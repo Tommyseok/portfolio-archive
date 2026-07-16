@@ -22,6 +22,7 @@ function Card({ item, onOpen, staff }: { item: Item; onOpen: (i: Item) => void; 
         <span className="card-sub">{item.year_month ?? "—"}</span>
       </div>
       <div style={{ display: "flex", gap: 5, flexWrap: "wrap", padding: "6px 4px 0" }}>
+        {item.media_type && <span className="badge">{item.media_type}{item.format ? ` · ${item.format}` : ""}</span>}
         {item.industry && <span className="badge">{item.industry}</span>}
         {tagsOf(item).slice(0, 3).map((t) => <span key={t} className="badge">#{t}</span>)}
       </div>

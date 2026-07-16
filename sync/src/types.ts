@@ -56,6 +56,8 @@ export interface UnifiedItem extends DerivedFields, AiFields {
   title: string;              // PD: 프로젝트명 / DS·MS: "광고주 + USE/특이사항" 요약
   overview: string;           // PD: 개요 / DS: USE / MS: 특이사항
   year_month: string | null;
+  media_type: string | null;  // 소재타입 대분류 (영상/이미지/인터랙티브/옥외·Ambient/IMC)
+  format: string | null;      // 소재타입 세부 (숏폼/배너/스틸·화보 등)
   content_type: ContentType[];
   tools: string[];            // DS: TOOL (GPT, 미드저니 등)
   team: string | null;        // DS: TEAM (DS1팀 등)

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Item } from "../types";
-import { tagsOf, SOURCE_TEAM_LABELS } from "../types";
+import { tagsOf, formatKey, SOURCE_TEAM_LABELS } from "../types";
 import type { Filters } from "../lib/filter";
 import { emptyFilters, activeFilterCount } from "../lib/filter";
 
@@ -83,8 +83,31 @@ export function FilterBar({ items, filters, setFilters, resultCount, title }: {
       .sort((a, b) => (a.group ?? "").localeCompare(b.group ?? "") || b.count - a.count);
   }, [items]);
 
-  const optType = useMemo<Opt[]>(() =>
-    [...countBy(items, (i) => i.content_type).entries()].map(([value, count]) => ({ value, count })).sort((a, b) => b.count - a.count), [items]);
+  // 소재타입 2단: "대분류 전체"(media:영상) + 세부("영상>숏폼")를 한 드롭다운에
+  const optType = useMemo<Opt[]>(() => {
+    const mediaCounts = countBy(items, (i) => [i.media_type]);
+    const leafCounts = countBy(items, (i) => [formatKey(i.media_type, i.format)]);
+    const out: Opt[] = [];
+    for (const [media, count] of mediaCounts.entries()) {
+      out.push({ value: `media:${media}`, label: `${media} 전체`, count, group: media });
+      for (const [key, n] of leafCounts.entries()) {
+        if (key.startsWith(media + ">")) out.push({ value: key, label: key.split(">")[1], count: n, group: media });
+      }
+    }
+    return out;
+  }, [items]);
+
+  const toggleType = (v: string) => {
+    if (v.startsWith("media:")) {
+      const m = v.slice(6);
+      const cur = filters.media_type;
+      setFilters({ ...filters, media_type: cur.includes(m) ? cur.filter((x) => x !== m) : [...cur, m] });
+    } else {
+      const cur = filters.format;
+      setFilters({ ...filters, format: cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v] });
+    }
+  };
+  const selectedType = [...filters.media_type.map((m) => `media:${m}`), ...filters.format];
 
   const optTags = useMemo<Opt[]>(() =>
     [...countBy(items, (i) => tagsOf(i)).entries()].map(([value, count]) => ({ value, count })).sort((a, b) => b.count - a.count), [items]);
@@ -101,7 +124,8 @@ export function FilterBar({ items, filters, setFilters, resultCount, title }: {
   const chips: { label: string; onX: () => void }[] = [
     ...filters.category_group.map((v) => ({ label: v, onX: () => toggle("category_group")(v) })),
     ...filters.industry.map((v) => ({ label: v, onX: () => toggle("industry")(v) })),
-    ...filters.content_type.map((v) => ({ label: v, onX: () => toggle("content_type")(v) })),
+    ...filters.media_type.map((v) => ({ label: v, onX: () => toggleType(`media:${v}`) })),
+    ...filters.format.map((v) => ({ label: v.replace(">", " · "), onX: () => toggleType(v) })),
     ...filters.tags.map((v) => ({ label: "#" + v, onX: () => toggle("tags")(v) })),
     ...filters.client.map((v) => ({ label: v, onX: () => toggle("client")(v) })),
     ...filters.source_team.map((v) => ({ label: v, onX: () => toggle("source_team")(v) })),
@@ -113,7 +137,7 @@ export function FilterBar({ items, filters, setFilters, resultCount, title }: {
       <div className="filterbar">
         <div className="container filterbar-in">
           <Pill label="카테고리" opts={optIndustry} selected={filters.industry} onToggle={toggle("industry")} grouped />
-          <Pill label="소재타입" opts={optType} selected={filters.content_type} onToggle={toggle("content_type")} />
+          <Pill label="소재타입" opts={optType} selected={selectedType} onToggle={toggleType} grouped />
           <Pill label="태그" opts={optTags} selected={filters.tags} onToggle={toggle("tags")} />
           <Pill label="광고주" opts={optClient} selected={filters.client} onToggle={toggle("client")} />
           <Pill label="제작소스" opts={optTeam} selected={filters.source_team} onToggle={toggle("source_team")} />

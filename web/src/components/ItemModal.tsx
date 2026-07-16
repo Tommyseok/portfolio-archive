@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Item } from "../types";
-import { SOURCE_TEAM_LABELS, tagsOf } from "../types";
+import { SOURCE_TEAM_LABELS, MEDIA_TAXONOMY, tagsOf } from "../types";
 import { saveOverlay, uploadExtraImage } from "../lib/useData";
 
 function TagEditor({ tags, setTags }: { tags: string[]; setTags: (t: string[]) => void }) {
@@ -40,6 +40,8 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
   const [tags, setTags] = useState<string[]>([]);
   const [creators, setCreators] = useState("");
   const [approved, setApproved] = useState(false);
+  const [media, setMedia] = useState("");
+  const [fmt, setFmt] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -50,6 +52,8 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
     setTags(item.custom_tags ?? []);
     setCreators((item.creators ?? []).join(", "));
     setApproved(item.showcase_approved);
+    setMedia(item.media_type ?? "");
+    setFmt(item.format ?? "");
   }, [item]);
 
   if (!item) return null;
@@ -63,6 +67,8 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
         custom_tags: tags,
         creators: creators.split(",").map((s) => s.trim()).filter(Boolean),
         showcase_approved: approved,
+        media_type: media || null,
+        format: fmt || null,
       }, email);
       onSaved();
       setEdit(false);
@@ -106,6 +112,9 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
                 <p style={{ fontSize: 14, lineHeight: 1.65, marginTop: 12 }}>{item.custom_description || item.overview}</p>
               )}
               <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+                {item.media_type && (
+                  <div className="label-row"><span className="label-key">소재타입</span><span className="badge">{item.media_type}</span>{item.format && <span className="badge">{item.format}</span>}</div>
+                )}
                 <div className="label-row"><span className="label-key">카테고리</span><span className="badge">{item.category_group ?? "미확정"}</span>{item.industry && <span className="badge">{item.industry}</span>}{item.advertiser_type && <span className="badge">{item.advertiser_type}</span>}</div>
                 {tagsOf(item).length > 0 && (
                   <div className="label-row"><span className="label-key">태그</span>{tagsOf(item).map((t) => <span key={t} className="badge">#{t}</span>)}</div>
@@ -169,6 +178,19 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
                 <button className={"btn" + (approved ? " accent" : " ghost")} onClick={() => setApproved(!approved)}>
                   {approved ? "공개 중" : "비공개"}
                 </button>
+              </div>
+              <div className="field">
+                <label>소재타입</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <select className="input" value={media} onChange={(e) => { setMedia(e.target.value); setFmt(MEDIA_TAXONOMY[e.target.value]?.[0] ?? ""); }}>
+                    <option value="">대분류 선택</option>
+                    {Object.keys(MEDIA_TAXONOMY).map((m) => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                  <select className="input" value={fmt} onChange={(e) => setFmt(e.target.value)} disabled={!media}>
+                    <option value="">세부 선택</option>
+                    {(MEDIA_TAXONOMY[media] ?? []).map((f) => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </div>
               </div>
               <div className="field">
                 <label>설명 (썸네일 캡션·상세 소개)</label>
