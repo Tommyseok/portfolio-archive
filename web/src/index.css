@@ -188,6 +188,55 @@ img { max-width: 100%; }
 .hstat .num { font-family: var(--mono); font-weight: 700; font-size: 26px; letter-spacing: -0.03em; }
 .hstat .lbl { font-size: 12px; color: var(--ink-3); }
 
+/* ── Showcase 히어로 2.0 (마퀴형) ── */
+.hero2 { padding: 78px 0 34px; }
+@media (max-width: 768px) { .hero2 { padding: 44px 0 20px; } }
+.hero2-copy { max-width: 720px; }
+.hero2 h1 {
+  margin: 0; font-size: clamp(36px, 5.4vw, 62px); font-weight: 800;
+  letter-spacing: -0.05em; line-height: 1.04;
+}
+.hero2 h1 em { font-style: normal; color: var(--accent); }
+.hero2 p { color: var(--ink-2); font-size: 16px; margin: 18px 0 0; max-width: 52ch; }
+.hero2-cta { display: flex; align-items: center; gap: 18px; margin-top: 26px; }
+.hstat.inline { display: flex; align-items: baseline; gap: 7px; }
+.hstat.inline .num { font-size: 20px; }
+
+/* 썸네일 무한 마퀴 */
+.mq-wrap { padding: 10px 0 6px; overflow: hidden; display: flex; flex-direction: column; gap: 14px; }
+.mq-row { overflow: hidden; }
+.mq-track {
+  display: flex; gap: 14px; width: max-content;
+  animation: mq-scroll linear infinite;
+  will-change: transform;
+}
+.mq-track.rev { animation-direction: reverse; }
+.mq-row:hover .mq-track { animation-play-state: paused; }
+@keyframes mq-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.mq-card {
+  position: relative; flex-shrink: 0; height: 170px; aspect-ratio: 16 / 10;
+  border-radius: 16px; overflow: hidden; border: 1px solid var(--line-soft);
+  padding: 0; background: #eceef1; cursor: pointer;
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.mq-card:hover { transform: translateY(-3px) scale(1.02); box-shadow: var(--shadow-diffuse); }
+.mq-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mq-label {
+  position: absolute; left: 10px; bottom: 8px;
+  font-size: 11px; font-weight: 700; color: #fff;
+  background: rgba(16, 16, 20, 0.55); backdrop-filter: blur(4px);
+  padding: 2px 9px; border-radius: 999px;
+}
+@media (max-width: 680px) { .mq-card { height: 120px; } }
+
+/* 브랜드 텍스트 스트립 */
+.client-strip { border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); margin-top: 22px; padding: 13px 0; background: var(--surface); }
+.client-track {
+  display: flex; gap: 44px; width: max-content;
+  animation: mq-scroll 60s linear infinite;
+}
+.client-track span { font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: var(--ink-3); white-space: nowrap; }
+
 /* ── 모달 ── */
 .modal-back {
   position: fixed; inset: 0; z-index: 60; background: rgba(16, 16, 20, 0.45);

@@ -39,6 +39,17 @@
 - 2026-07-16: 구 AE 라벨 스키마 폐기
 - 미결: 소구포인트 리스트 (사용자 수정 의견 대기)
 
+## 인프라 (Phase C, 2026-07-16)
+
+- **Supabase**: 프로젝트 `madup-pricing-prod` (nfwpdowrggvwbxroyury, 서울) 공용 — 테이블 `credential_items`(579행), 버킷 `credential-images`
+  - RLS: 비로그인=showcase_approved만 / @madup.com=전체 조회+편집레이어 update / insert·delete=service_role
+  - anon 키는 web/src/lib/supabase.ts 에 하드코딩 (공개 키, RLS로 보호)
+- **Vercel**: 신규 프로젝트 `madup-credential` (tommy-s-projects21 팀, 현 로그인 계정). 구 프로젝트 portfolio-archive(-three URL)는 다른 Vercel 계정 소유라 접근 불가 → 새 프로젝트로 이관
+  - 로컬 CLI 인증 완료 (device flow). CI의 VERCEL_TOKEN 은 만료 — 사용자 교체 필요
+  - GitHub Secrets: VERCEL_ORG_ID/PROJECT_ID 는 새 프로젝트로 갱신됨 (2026-07-16)
+- **CI**: sync.yml(매일 09시, 5일+ 연속 실패 중 — 원인 확인 필요), deploy.yml(수동 배포 전용, 토큰 교체 후 사용 가능)
+- **로그인**: 매직링크(기본 SMTP, 시간당 발송 제한) — Google OAuth 프로바이더 연결 권장(대시보드 수동)
+
 ## 관련 문서
 - 원 설계: `docs/superpowers/specs/2026-05-27-portfolio-archive-design.md`
 - 분류 논의 원본: https://claude.ai/share/78c3499d-164b-44c2-b3cc-5935b7fba0e1 (2뎁스, 광고주 마스터, 소구 폐쇄형 리스트)

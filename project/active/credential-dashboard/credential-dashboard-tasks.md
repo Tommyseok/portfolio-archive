@@ -5,7 +5,13 @@
 - [x] 563건 DB 적재 (임시 정책 → REST 업서트 → 정책 회수)
 - [x] 웹 전면 개편 — Showcase(공개)/Explore(로그인)/Directory(팀·광고주·크리에이터) + awwwards식 필터바(카테고리 2단·소재타입·태그 복수·광고주·소스·비딩) + 편집 모달(설명·태그·크리에이터·공개토글·이미지업로드) + 매직링크 로그인
 - [x] 프로덕션 빌드 통과, 로그인 게이트·빈 상태 검증
-- [ ] 배포 (vercel --prod) — 사용자 결정 대기
+- [x] 코드 커밋·푸시 (phase1-archive, 6c18ca7) + deploy-only 워크플로우 추가
+- [x] MS 드롭박스 2024년분 16건 수집·DB 적재 (총 579건) + 마스터 6개 광고주 추가
+- [x] **프로덕션 배포 완료** — https://madup-credential.vercel.app (신규 프로젝트, tommy 계정 device-flow 인증). 구 portfolio-archive-three URL은 다른 Vercel 계정 소유라 이관 불가 → 새 도메인으로 전환
+- [x] GitHub Secrets VERCEL_ORG_ID/PROJECT_ID 신규 프로젝트로 갱신
+- [ ] 사용자: Supabase 대시보드 로그인 → Authentication → URL Configuration → Site URL=https://madup-credential.vercel.app, Redirect URLs에 https://madup-credential.vercel.app/** 와 http://localhost:5173/** 추가 (안 하면 로그인 메일 링크가 잘못된 주소로 이동)
+- [ ] 사용자: VERCEL_TOKEN 시크릿 교체 (CI 배포용 — 로컬 배포는 이미 가능)
+- [ ] ⚠ 일일 sync CI 가 최소 5일째 조기 실패 중 (25~33초) — 원인 확인 필요
 - [ ] Google OAuth 프로바이더 설정 (Supabase 대시보드, 수동) — 매직링크 기본 SMTP는 시간당 발송 제한 있음
 - [ ] sync 파이프라인 → Supabase 자동 upsert (service key 필요, CI 통합)
 - [ ] 실제 매드업 계정으로 로그인·편집·공개승인 E2E 테스트 (사용자)
