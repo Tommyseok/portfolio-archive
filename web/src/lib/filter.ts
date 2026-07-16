@@ -4,7 +4,6 @@ import { tagsOf, formatKey } from "../types";
 export interface Filters {
   category_group: string[];
   industry: string[];
-  media_type: string[];   // 소재타입 대분류 (영상/이미지/…)
   format: string[];       // 소재타입 세부 — "영상>숏폼" 복합 키
   tags: string[];         // 소구포인트 + 수기 태그 (복수 선택)
   client: string[];
@@ -16,7 +15,6 @@ export interface Filters {
 export const emptyFilters: Filters = {
   category_group: [],
   industry: [],
-  media_type: [],
   format: [],
   tags: [],
   client: [],
@@ -26,7 +24,7 @@ export const emptyFilters: Filters = {
 };
 
 export const activeFilterCount = (f: Filters) =>
-  f.category_group.length + f.industry.length + f.media_type.length + f.format.length +
+  f.category_group.length + f.industry.length + f.format.length +
   f.tags.length + f.client.length + f.source_team.length +
   (f.bidding !== null ? 1 : 0) + (f.q.trim() ? 1 : 0);
 
@@ -49,7 +47,6 @@ export function applyFilters(items: Item[], f: Filters): Item[] {
   return items.filter((it) =>
     some(f.category_group, [it.category_group]) &&
     some(f.industry, [it.industry]) &&
-    some(f.media_type, [it.media_type]) &&
     some(f.format, [formatKey(it.media_type, it.format)]) &&
     some(f.tags, tagsOf(it)) &&
     some(f.client, [it.client]) &&

@@ -48,13 +48,13 @@ export interface Item {
 /** 필터에 쓰는 태그 = AI 소구포인트 + 수기 태그 합집합 */
 export const tagsOf = (i: Item): string[] => [...new Set([...(i.appeal_points ?? []), ...(i.custom_tags ?? [])])];
 
-/** 소재타입 2단 체계 (2026-07-16 확정) */
+/** 소재타입 2단 체계 (2026-07-16 영문 확정) — 필터엔 0건 리프도 항상 노출 */
 export const MEDIA_TAXONOMY: Record<string, string[]> = {
-  "영상": ["롱폼", "숏폼"],
-  "이미지": ["배너", "랜딩페이지", "스틸·화보"],
-  "인터랙티브": ["게임", "웹페이지"],
-  "옥외/Ambient": ["영상", "지면", "이벤트", "팝업"],
-  "IMC": ["통합 캠페인"],
+  "Static design": ["Banner", "Page", "Photo"],
+  "Video production": ["Long form", "Short form", "Motion graphic"],
+  "Interactive design": ["Game", "Web"],
+  "IMC": ["OOH", "Popup", "Event"],
+  "Content design": ["Social", "Blog"],
 };
 
 /** 필터용 복합 키 — 옥외>영상처럼 리프명이 겹쳐도 유일 */

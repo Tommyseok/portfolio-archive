@@ -9,7 +9,7 @@ const item = (over: Partial<Item>): Item => ({
   industry: "뷰티", category_group: "소비재", advertiser_type: "브랜드/서비스",
   advertiser_status: "confirmed", is_bidding: false,
   title: "선케어", overview: "양현종 메이킹", year_month: "2026-04",
-  media_type: "영상", format: "숏폼",
+  media_type: "Video production", format: "Short form",
   content_type: ["촬영숏폼"], tools: [], team: null,
   video_urls: ["u"], thumbnail: "t", ai_used: false,
   period_start: null, period_end: null, in_house: true, piece_count: 1,
@@ -42,17 +42,12 @@ describe("applyFilters", () => {
   it("소재타입 2단 + 태그 + 카테고리 조합 (뷰티×숏폼×감성)", () => {
     const items = [
       item({}),
-      item({ id: "2", media_type: "이미지", format: "배너" }),
+      item({ id: "2", media_type: "Static design", format: "Banner" }),
       item({ id: "3", industry: "금융/핀테크" }),
     ];
-    const r = applyFilters(items, { ...emptyFilters, industry: ["뷰티"], format: ["영상>숏폼"], tags: ["감성/브랜드"] });
+    const r = applyFilters(items, { ...emptyFilters, industry: ["뷰티"], format: ["Video production>Short form"], tags: ["감성/브랜드"] });
     expect(r.map((i) => i.id)).toEqual(["1"]);
-    // 대분류 전체 선택
-    expect(applyFilters(items, { ...emptyFilters, media_type: ["이미지"] }).map((i) => i.id)).toEqual(["2"]);
-  });
-  it("옥외>영상은 영상>숏폼과 리프명이 겹쳐도 구분된다", () => {
-    const items = [item({}), item({ id: "2", media_type: "옥외/Ambient", format: "영상" })];
-    expect(applyFilters(items, { ...emptyFilters, format: ["옥외/Ambient>영상"] }).map((i) => i.id)).toEqual(["2"]);
+    expect(applyFilters(items, { ...emptyFilters, format: ["Static design>Banner"] }).map((i) => i.id)).toEqual(["2"]);
   });
   it("자유 텍스트 q 는 필터와 AND 결합", () => {
     const items = [item({}), item({ id: "2", overview: "아마존 프로모션" })];

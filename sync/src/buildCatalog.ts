@@ -39,11 +39,11 @@ const UNCLASSIFIED_AI: AiFields = {
   _ai_confidence: null,
 };
 
-/** 소재타입 2단 매핑 (2026-07-16 확정 체계). 스틸이 섞이면 화보 제작 건으로 본다. */
+/** 소재타입 2단 매핑 (2026-07-16 영문 확정 체계). 스틸이 섞이면 화보 제작 건으로 본다. */
 function mediaFormatOf(contentType: string[]): { media_type: string; format: string } {
-  if (contentType.includes("스틸사진")) return { media_type: "이미지", format: "스틸·화보" };
-  if (contentType.includes("AI이미지")) return { media_type: "이미지", format: "배너" };
-  return { media_type: "영상", format: "숏폼" };
+  if (contentType.includes("스틸사진")) return { media_type: "Static design", format: "Photo" };
+  if (contentType.includes("AI이미지")) return { media_type: "Static design", format: "Banner" };
+  return { media_type: "Video production", format: "Short form" };
 }
 
 async function main(): Promise<void> {
@@ -115,8 +115,8 @@ async function main(): Promise<void> {
         title: `${derived.client} — ${p.use || "생성형AI 크리에이티브"}`,
         overview: p.use,
         year_month: p.year_month,
-        media_type: "이미지",
-        format: "배너",
+        media_type: "Static design",
+        format: "Banner",
         content_type: ["AI이미지"],
         tools: p.tools,
         team: p.team,
@@ -149,8 +149,8 @@ async function main(): Promise<void> {
         title: `${derived.client} — AI영상·모션${derived.is_bidding ? " (비딩)" : ""}`,
         overview: p.note,
         year_month: p.year_month,
-        media_type: "영상",
-        format: "숏폼",
+        media_type: "Video production",
+        format: "Short form",
         content_type: ["AI영상"],
         tools: [],
         team: null,
