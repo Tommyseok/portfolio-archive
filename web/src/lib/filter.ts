@@ -7,7 +7,7 @@ export interface Filters {
   format: string[];       // 소재타입 세부 — "영상>숏폼" 복합 키
   tags: string[];         // 소구포인트 + 수기 태그 (복수 선택)
   client: string[];
-  source_team: string[];
+  production_team: string[];   // 제작팀
   team: string[];              // 세부 팀 (DS1팀 등)
   production_method: string[]; // 제작방식
   bidding: boolean | null;
@@ -20,7 +20,7 @@ export const emptyFilters: Filters = {
   format: [],
   tags: [],
   client: [],
-  source_team: [],
+  production_team: [],
   team: [],
   production_method: [],
   bidding: null,
@@ -29,7 +29,7 @@ export const emptyFilters: Filters = {
 
 export const activeFilterCount = (f: Filters) =>
   f.category_group.length + f.industry.length + f.format.length +
-  f.tags.length + f.client.length + f.source_team.length + f.team.length + f.production_method.length +
+  f.tags.length + f.client.length + f.production_team.length + f.team.length + f.production_method.length +
   (f.bidding !== null ? 1 : 0) + (f.q.trim() ? 1 : 0);
 
 const some = (sel: string[], vals: (string | null)[]) =>
@@ -40,7 +40,7 @@ export function keywordMatch(it: Item, q: string): boolean {
   const hay = [
     it.client, it.client_raw, it.title, it.overview, it.search_summary,
     it.custom_description ?? "", it.industry ?? "", it.category_group ?? "",
-    it.media_type ?? "", it.format ?? "", it.team ?? "", it.production_method ?? "",
+    it.media_type ?? "", it.format ?? "", it.team ?? "", it.production_method ?? "", it.production_team ?? "",
     ...(it.keywords ?? []), ...tagsOf(it), ...(it.tools ?? []),
     ...(it.content_type ?? []), ...(it.creators ?? []),
   ].join(" ").toLowerCase();
@@ -54,7 +54,7 @@ export function applyFilters(items: Item[], f: Filters): Item[] {
     some(f.format, [formatKey(it.media_type, it.format)]) &&
     some(f.tags, tagsOf(it)) &&
     some(f.client, [it.client]) &&
-    some(f.source_team, [it.source_team]) &&
+    some(f.production_team, [it.production_team]) &&
     some(f.team, [it.team]) &&
     some(f.production_method, [it.production_method]) &&
     (f.bidding === null || it.is_bidding === f.bidding) &&

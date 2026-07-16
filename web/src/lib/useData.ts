@@ -47,7 +47,7 @@ export function useItems(deps: unknown[] = []) {
 /** 편집 레이어 저장 */
 export async function saveOverlay(
   id: string,
-  patch: Partial<Pick<Item, "custom_description" | "custom_tags" | "extra_images" | "creators" | "showcase_approved" | "media_type" | "format" | "production_method">>,
+  patch: Partial<Pick<Item, "custom_description" | "custom_tags" | "extra_images" | "creators" | "showcase_approved" | "media_type" | "format" | "production_method" | "production_team">>,
   email: string,
 ) {
   const { error } = await supabase

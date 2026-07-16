@@ -31,7 +31,7 @@ export function Explore({ items, loading, filters, setFilters, staff, ready, ema
       setFilters({
         ...filters,
         client: client ? [client] : filters.client,
-        source_team: team ? [team] : filters.source_team,
+        production_team: team ? [team] : filters.production_team,
         team: subteam ? [subteam] : filters.team,
         q: creator ?? filters.q,
       });

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Item } from "../types";
-import { SOURCE_TEAM_LABELS, MEDIA_TAXONOMY, PRODUCTION_METHODS, tagsOf } from "../types";
+import { SOURCE_TEAM_LABELS, MEDIA_TAXONOMY, PRODUCTION_METHODS, PRODUCTION_TEAMS, tagsOf } from "../types";
 import { saveOverlay, uploadExtraImage } from "../lib/useData";
 
 /** 크리에이티브 캐러셀 — 추출된 소재 이미지들을 스냅 스크롤로, 없으면 슬라이드 캡처 1장 */
@@ -83,6 +83,7 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
   const [approved, setApproved] = useState(false);
   const [media, setMedia] = useState("");
   const [method, setMethod] = useState("");
+  const [pteam, setPteam] = useState("");
   const [fmt, setFmt] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -96,6 +97,7 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
     setApproved(item.showcase_approved);
     setMedia(item.media_type ?? "");
     setMethod(item.production_method ?? "");
+    setPteam(item.production_team ?? "");
     setFmt(item.format ?? "");
   }, [item]);
 
@@ -113,6 +115,7 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
         media_type: media || null,
         format: fmt || null,
         production_method: method || null,
+        production_team: pteam || null,
       }, email);
       onSaved();
       setEdit(false);
@@ -158,7 +161,7 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
                   <div className="label-row"><span className="label-key">소재타입</span><span className="badge">{item.media_type}</span>{item.format && <span className="badge">{item.format}</span>}</div>
                 )}
                 <div className="label-row"><span className="label-key">카테고리</span><span className="badge">{item.category_group ?? "미확정"}</span>{item.industry && <span className="badge">{item.industry}</span>}{item.advertiser_type && <span className="badge">{item.advertiser_type}</span>}</div>
-                <div className="label-row"><span className="label-key">제작</span>{item.production_method && <span className="badge">{item.production_method}</span>}<span className="badge">{item.source_team}</span>{item.team && <span className="badge">{item.team}</span>}</div>
+                <div className="label-row"><span className="label-key">제작</span>{item.production_method && <span className="badge">{item.production_method}</span>}<span className="badge">{item.production_team ?? item.source_team}</span>{item.team && <span className="badge">{item.team}</span>}</div>
                 {tagsOf(item).length > 0 && (
                   <div className="label-row"><span className="label-key">태그</span>{tagsOf(item).map((t) => <span key={t} className="badge">#{t}</span>)}</div>
                 )}
@@ -236,11 +239,17 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
                 </div>
               </div>
               <div className="field">
-                <label>제작방식</label>
-                <select className="input" value={method} onChange={(e) => setMethod(e.target.value)}>
-                  <option value="">선택</option>
-                  {PRODUCTION_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
-                </select>
+                <label>제작방식 · 제작팀</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <select className="input" value={method} onChange={(e) => setMethod(e.target.value)}>
+                    <option value="">제작방식 선택</option>
+                    {PRODUCTION_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                  <select className="input" value={pteam} onChange={(e) => setPteam(e.target.value)}>
+                    <option value="">제작팀 선택</option>
+                    {PRODUCTION_TEAMS.map((m) => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
               </div>
               <div className="field">
                 <label>설명 (썸네일 캡션·상세 소개)</label>

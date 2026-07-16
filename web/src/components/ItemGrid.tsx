@@ -16,7 +16,7 @@ function Card({ item, onOpen, staff }: { item: Item; onOpen: (i: Item) => void; 
         </div>
       </div>
       <div className="card-meta">
-        <span className={"badge team-" + item.source_team}>{item.source_team}</span>
+        <span className={"badge team-" + item.source_team}>{item.production_team ?? item.source_team}</span>
         {item.is_bidding && <span className="badge bidding">비딩</span>}
         {staff && item.showcase_approved && <span className="badge showcase">공개</span>}
         <span className="card-client">{item.client}</span>

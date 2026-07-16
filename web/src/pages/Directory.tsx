@@ -39,7 +39,7 @@ export function Directory({ items, staff, ready }: { items: Item[]; staff: boole
   if (!ready) return <div className="container grid">{Array.from({ length: 6 }, (_, i) => <div key={i} className="skel" />)}</div>;
   if (!staff) return <LoginGate reason="Directory는 매드업 구성원만 볼 수 있습니다." />;
 
-  const teams = agg(items, (i) => [i.source_team]);
+  const teams = agg(items, (i) => [i.production_team]);
   const subTeams = agg(items, (i) => [i.team]);
   const clients = agg(items, (i) => [i.client]);
   const creators = agg(items, (i) => i.creators ?? []);

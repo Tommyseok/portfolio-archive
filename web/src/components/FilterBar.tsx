@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Item } from "../types";
-import { tagsOf, formatKey, MEDIA_TAXONOMY, PRODUCTION_METHODS, SOURCE_TEAM_LABELS } from "../types";
+import { tagsOf, formatKey, MEDIA_TAXONOMY, PRODUCTION_METHODS, PRODUCTION_TEAMS } from "../types";
 import type { Filters } from "../lib/filter";
 import { emptyFilters, activeFilterCount } from "../lib/filter";
 
@@ -104,10 +104,10 @@ export function FilterBar({ items, filters, setFilters, resultCount, title }: {
     return PRODUCTION_METHODS.map((m) => ({ value: m, count: counts.get(m) ?? 0 }));
   }, [items]);
 
-  const optTeam = useMemo<Opt[]>(() =>
-    [...countBy(items, (i) => [i.source_team]).entries()].map(([value, count]) => ({
-      value, count, label: SOURCE_TEAM_LABELS[value as keyof typeof SOURCE_TEAM_LABELS] ?? value,
-    })), [items]);
+  const optTeam = useMemo<Opt[]>(() => {
+    const counts = countBy(items, (i) => [i.production_team]);
+    return PRODUCTION_TEAMS.map((v) => ({ value: v, count: counts.get(v) ?? 0 }));
+  }, [items]);
 
   const active = activeFilterCount(filters);
   const chips: { label: string; onX: () => void }[] = [
@@ -116,7 +116,7 @@ export function FilterBar({ items, filters, setFilters, resultCount, title }: {
     ...filters.format.map((v) => ({ label: v.split(">")[1] ?? v, onX: () => toggle("format")(v) })),
     ...filters.tags.map((v) => ({ label: "#" + v, onX: () => toggle("tags")(v) })),
     ...filters.client.map((v) => ({ label: v, onX: () => toggle("client")(v) })),
-    ...filters.source_team.map((v) => ({ label: v, onX: () => toggle("source_team")(v) })),
+    ...filters.production_team.map((v) => ({ label: v, onX: () => toggle("production_team")(v) })),
     ...filters.team.map((v) => ({ label: v, onX: () => toggle("team")(v) })),
     ...filters.production_method.map((v) => ({ label: v, onX: () => toggle("production_method")(v) })),
     ...(filters.bidding !== null ? [{ label: filters.bidding ? "비딩" : "실집행", onX: () => setFilters({ ...filters, bidding: null }) }] : []),
@@ -131,7 +131,7 @@ export function FilterBar({ items, filters, setFilters, resultCount, title }: {
           <Pill label="태그" opts={optTags} selected={filters.tags} onToggle={toggle("tags")} />
           <Pill label="광고주" opts={optClient} selected={filters.client} onToggle={toggle("client")} />
           <Pill label="제작방식" opts={optMethod} selected={filters.production_method} onToggle={toggle("production_method")} />
-          <Pill label="제작팀" opts={optTeam} selected={filters.source_team} onToggle={toggle("source_team")} />
+          <Pill label="제작팀" opts={optTeam} selected={filters.production_team} onToggle={toggle("production_team")} />
           <button
             className={"fpill" + (filters.bidding === true ? " on" : "")}
             onClick={() => setFilters({ ...filters, bidding: filters.bidding === true ? null : true })}>
