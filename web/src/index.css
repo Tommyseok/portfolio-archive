@@ -208,6 +208,46 @@ img { max-width: 100%; }
 .label-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .label-key { font-size: 11.5px; color: var(--ink-3); width: 70px; flex-shrink: 0; }
 
+/* ── 크리에이티브 캐러셀 ── */
+.carousel { position: relative; background: #17171b; }
+.carousel-track {
+  display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.carousel-track::-webkit-scrollbar { display: none; }
+.carousel-slide {
+  flex: 0 0 100%; scroll-snap-align: center;
+  display: flex; align-items: center; justify-content: center;
+  height: 360px;
+}
+@media (max-width: 680px) { .carousel-slide { height: 260px; } }
+.carousel-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.carousel-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px; border-radius: 50%; border: 0;
+  background: rgba(255, 255, 255, 0.92); color: var(--ink);
+  font-size: 20px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s var(--ease);
+}
+.carousel-nav:hover { transform: translateY(-50%) scale(1.06); }
+.carousel-nav:disabled { opacity: 0.25; cursor: default; }
+.carousel-nav.prev { left: 12px; }
+.carousel-nav.next { right: 12px; }
+.carousel-count {
+  position: absolute; right: 12px; bottom: 10px;
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  color: #fff; background: rgba(16, 16, 20, 0.6); backdrop-filter: blur(4px);
+  padding: 2px 9px; border-radius: 999px;
+}
+.carousel-src {
+  position: absolute; left: 12px; bottom: 10px;
+  font-size: 11px; font-weight: 600; color: rgba(255, 255, 255, 0.85);
+  background: rgba(16, 16, 20, 0.6); backdrop-filter: blur(4px);
+  padding: 2px 9px; border-radius: 999px;
+}
+
 /* ── 버튼·입력 ── */
 .btn {
   display: inline-flex; align-items: center; gap: 7px;

@@ -1,5 +1,10 @@
 # 크리덴셜 대시보드 — 태스크
 
+## 7. UI 개선 (2026-07-16 진행)
+- [x] 헤드라인 확정: "On-brand, on-time, built to perform."
+- [x] 소재타입 영문 2단 체계 (Static design/Video production/Interactive design/IMC/Content design) — 0건 리프 상시 노출, 편집 가능
+- [ ] 크리에이티브 에셋 추출 — DS/MS 슬라이드의 개별 이미지(~1000장)를 800px webp 로 다운로드, 카드 커버·모달 캐러셀로 표시 (동기화 실행 중)
+
 ## 6. Phase C: 3섹션 플랫폼 전환 (2026-07-16 승인·착수)
 - [x] Supabase 백엔드 — madup-pricing-prod 프로젝트에 `credential_items` 테이블 + RLS(비로그인=showcase만, @madup.com=전체+편집레이어만 update) + `credential-images` 스토리지
 - [x] 563건 DB 적재 (임시 정책 → REST 업서트 → 정책 회수)

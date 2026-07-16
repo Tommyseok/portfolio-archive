@@ -25,6 +25,7 @@ export interface Item {
   tools: string[];
   team: string | null;
   video_urls: string[];
+  asset_images: string[];      // 슬라이드에서 추출한 크리에이티브 이미지 (assets/*.webp)
   thumbnail: string | null;
   ai_used: boolean;
   period_start: string | null;

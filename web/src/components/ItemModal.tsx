@@ -1,7 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Item } from "../types";
 import { SOURCE_TEAM_LABELS, MEDIA_TAXONOMY, tagsOf } from "../types";
 import { saveOverlay, uploadExtraImage } from "../lib/useData";
+
+/** 크리에이티브 캐러셀 — 추출된 소재 이미지들을 스냅 스크롤로, 없으면 슬라이드 캡처 1장 */
+function Carousel({ item }: { item: Item }) {
+  const slides = (item.asset_images?.length ? item.asset_images : item.thumbnail ? [item.thumbnail] : []);
+  const [idx, setIdx] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { setIdx(0); trackRef.current?.scrollTo({ left: 0 }); }, [item.id]);
+  if (slides.length === 0) return null;
+
+  const go = (d: number) => {
+    const next = Math.min(slides.length - 1, Math.max(0, idx + d));
+    setIdx(next);
+    const el = trackRef.current;
+    el?.scrollTo({ left: next * el.clientWidth, behavior: "smooth" });
+  };
+  const onScroll = () => {
+    const el = trackRef.current;
+    if (el) setIdx(Math.round(el.scrollLeft / el.clientWidth));
+  };
+
+  return (
+    <div className="carousel">
+      <div className="carousel-track" ref={trackRef} onScroll={onScroll}>
+        {slides.map((s) => (
+          <div key={s} className="carousel-slide"><img src={s} alt="" loading="lazy" /></div>
+        ))}
+      </div>
+      {slides.length > 1 && (
+        <>
+          <button className="carousel-nav prev" onClick={() => go(-1)} disabled={idx === 0} aria-label="이전">‹</button>
+          <button className="carousel-nav next" onClick={() => go(1)} disabled={idx === slides.length - 1} aria-label="다음">›</button>
+          <div className="carousel-count">{idx + 1} / {slides.length}</div>
+        </>
+      )}
+      {item.asset_images?.length > 0 && item.thumbnail && (
+        <a className="carousel-src" href={item.thumbnail} target="_blank" rel="noreferrer">슬라이드 원본 ↗</a>
+      )}
+    </div>
+  );
+}
 
 function TagEditor({ tags, setTags }: { tags: string[]; setTags: (t: string[]) => void }) {
   const [draft, setDraft] = useState("");
@@ -94,9 +135,7 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
   return (
     <div className="modal-back" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        {item.thumbnail && (
-          <img src={item.thumbnail} alt="" style={{ width: "100%", maxHeight: 330, objectFit: "contain", background: "#eceef1" }} />
-        )}
+        <Carousel item={item} />
         <div className="modal-body">
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
             <span className={"badge team-" + item.source_team}>{SOURCE_TEAM_LABELS[item.source_team]}</span>

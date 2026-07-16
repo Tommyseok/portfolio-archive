@@ -5,7 +5,8 @@ import { tagsOf } from "../types";
 const PAGE = 48;
 
 function Card({ item, onOpen, staff }: { item: Item; onOpen: (i: Item) => void; staff: boolean }) {
-  const img = item.thumbnail ?? item.extra_images?.[0] ?? null;
+  // 추출된 크리에이티브 이미지가 있으면 슬라이드 캡처 대신 그걸 커버로
+  const img = item.asset_images?.[0] ?? item.thumbnail ?? item.extra_images?.[0] ?? null;
   return (
     <div className="card" onClick={() => onOpen(item)}>
       <div className="card-thumb">

@@ -9,6 +9,7 @@ import { fetchPresentation, downloadThumbnail } from "./slidesClient.js";
 import { parseSlide, isProjectSlide } from "./parseSlide.js";
 import { parseDsSlides, parseMsSlides } from "./parseDeck.js";
 import { loadMaster, buildResolver } from "./advertiserMaster.js";
+import { downloadSlideAssets } from "./assetDownloader.js";
 import { classify } from "./classify.js";
 import type { AiFields, UnifiedItem, PublicItem, SourceTeam } from "./types.js";
 
@@ -87,6 +88,7 @@ async function main(): Promise<void> {
         tools: [],
         team: null,
         video_urls: parsed.video_url ? [parsed.video_url] : [],
+        asset_images: [],
         thumbnail,
         ai_used: parsed.ai_used,
         period_start: parsed.period_start,
@@ -106,6 +108,7 @@ async function main(): Promise<void> {
     for (const p of parsedItems) {
       const derived = resolver.resolve(p.client_raw);
       const thumbnail = await downloadThumbnail(DECKS.DS, p.source_slide_id, undefined, "DS-");
+      const asset_images = await downloadSlideAssets("DS-", p.source_slide_id, p.images);
       items.push({
         id: `ds-${slug(derived.client, p.use, p.source_slide_id)}`,
         source_team: "DS",
@@ -121,6 +124,7 @@ async function main(): Promise<void> {
         tools: p.tools,
         team: p.team,
         video_urls: [],
+        asset_images,
         thumbnail,
         ai_used: true,
         period_start: null,
@@ -140,6 +144,7 @@ async function main(): Promise<void> {
     for (const p of parsedItems) {
       const derived = resolver.resolve(p.client_raw);
       const thumbnail = await downloadThumbnail(DECKS.MS, p.source_slide_id, undefined, "MS-");
+      const asset_images = await downloadSlideAssets("MS-", p.source_slide_id, p.images);
       items.push({
         id: `ms-${slug(derived.client, p.note || "ai영상", p.source_slide_id)}`,
         source_team: "MS",
@@ -155,6 +160,7 @@ async function main(): Promise<void> {
         tools: [],
         team: null,
         video_urls: p.video_urls,
+        asset_images,
         thumbnail,
         ai_used: true,
         period_start: null,

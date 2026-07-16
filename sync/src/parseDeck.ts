@@ -51,6 +51,17 @@ export function slideLinks(slide: Slide): string[] {
   return [...new Set(urls)];
 }
 
+/** 슬라이드 안 크리에이티브 이미지 요소들 (contentUrl 은 30분 만료 — 즉시 다운로드 필요) */
+export interface SlideImage { element_id: string; url: string }
+
+export function slideImages(slide: Slide): SlideImage[] {
+  const out: SlideImage[] = [];
+  for (const el of slide.pageElements ?? []) {
+    if (el.image?.contentUrl && el.objectId) out.push({ element_id: el.objectId, url: el.image.contentUrl });
+  }
+  return out;
+}
+
 export interface DsParsed {
   source_slide_id: string;
   client_raw: string;
@@ -58,6 +69,7 @@ export interface DsParsed {
   team: string | null;
   tools: string[];
   use: string;
+  images: SlideImage[];
 }
 
 export function parseDsSlides(slides: Slide[]): DsParsed[] {
@@ -73,6 +85,7 @@ export function parseDsSlides(slides: Slide[]): DsParsed[] {
       team: kv["TEAM"] || null,
       tools: (kv["TOOL"] ?? "").split(/[,+/·]/).map((t) => t.trim()).filter(Boolean),
       use: kv["USE"] ?? "",
+      images: slideImages(s),
     });
   }
   return out;
@@ -84,6 +97,7 @@ export interface MsParsed {
   year_month: string | null;
   note: string;
   video_urls: string[];
+  images: SlideImage[];
 }
 
 export function parseMsSlides(slides: Slide[]): MsParsed[] {
@@ -99,6 +113,7 @@ export function parseMsSlides(slides: Slide[]): MsParsed[] {
       year_month: parseKoreanMonth(kv["제작일자"]),
       note,
       video_urls: slideLinks(s),
+      images: slideImages(s),
     });
   }
   return out;

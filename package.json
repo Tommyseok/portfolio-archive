@@ -10,7 +10,7 @@
   "scripts": {
     "sync": "tsx sync/src/buildCatalog.ts",
     "dump": "tsx sync/scripts/dump-presentation.ts",
-    "web:data": "node -e \"const fs=require('fs');fs.mkdirSync('web/public',{recursive:true});fs.cpSync('data/thumbnails','web/public/thumbnails',{recursive:true});\""
+    "web:data": "node -e \"const fs=require('fs');fs.mkdirSync('web/public',{recursive:true});fs.cpSync('data/thumbnails','web/public/thumbnails',{recursive:true});if(fs.existsSync('data/assets'))fs.cpSync('data/assets','web/public/assets',{recursive:true});\""
   },
   "devDependencies": {
     "tsx": "^4.19.0",
@@ -18,9 +18,10 @@
     "vitest": "^2.1.0"
   },
   "dependencies": {
-    "googleapis": "^144.0.0",
-    "@google-cloud/local-auth": "^3.0.1",
     "@anthropic-ai/sdk": "^0.30.0",
-    "dotenv": "^16.4.0"
+    "@google-cloud/local-auth": "^3.0.1",
+    "dotenv": "^16.4.0",
+    "googleapis": "^144.0.0",
+    "sharp": "^0.35.3"
   }
 }

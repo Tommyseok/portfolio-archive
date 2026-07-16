@@ -62,6 +62,7 @@ export interface UnifiedItem extends DerivedFields, AiFields {
   tools: string[];            // DS: TOOL (GPT, 미드저니 등)
   team: string | null;        // DS: TEAM (DS1팀 등)
   video_urls: string[];
+  asset_images: string[];  // 슬라이드에서 추출한 크리에이티브 이미지 (assets/*.webp)
   thumbnail: string | null;
   ai_used: boolean;
   // PD 전용 (타 소스는 null)
