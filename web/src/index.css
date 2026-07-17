@@ -400,9 +400,11 @@ img { max-width: 100%; }
 .hpanel::after {
   content: ""; position: absolute; inset: 0;
   background:
-    linear-gradient(90deg, rgba(10, 10, 12, 0.55) 0%, rgba(10, 10, 12, 0.15) 55%, rgba(10, 10, 12, 0.3) 100%),
-    linear-gradient(180deg, rgba(10, 10, 12, 0.1) 0%, transparent 35%, rgba(10, 10, 12, 0.5) 100%);
+    linear-gradient(90deg, rgba(8, 8, 10, 0.74) 0%, rgba(8, 8, 10, 0.32) 42%, rgba(10, 10, 12, 0.08) 62%, rgba(10, 10, 12, 0.28) 100%),
+    linear-gradient(180deg, rgba(10, 10, 12, 0.1) 0%, transparent 35%, rgba(10, 10, 12, 0.52) 100%);
 }
+/* 첫 패널: 클로즈업 크롭(2.5:1) — 얼굴 쪽으로 앵커 */
+.hpanel.hp-first .hp-bg { object-position: 100% 50%; }
 .hp-content {
   position: relative; z-index: 2;
   padding: clamp(90px, 14vh, 150px) clamp(24px, 5vw, 84px) clamp(54px, 9vh, 104px);
