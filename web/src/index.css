@@ -403,16 +403,23 @@ img { max-width: 100%; }
     linear-gradient(90deg, rgba(8, 8, 10, 0.74) 0%, rgba(8, 8, 10, 0.32) 42%, rgba(10, 10, 12, 0.08) 62%, rgba(10, 10, 12, 0.28) 100%),
     linear-gradient(180deg, rgba(10, 10, 12, 0.1) 0%, transparent 35%, rgba(10, 10, 12, 0.52) 100%);
 }
-/* 첫 패널: 좌측 초록 여백에 텍스트가 놓이므로 디밍(스크림) 제거 — 원본 밝기 유지 */
-.hpanel.hp-first::after { display: none; }
+/* 첫 패널: 모델(우측)은 원본 밝기, 좌측 텍스트 영역으로 갈수록만 어둡게 그라디언트 */
+.hpanel.hp-first::after {
+  background: linear-gradient(90deg,
+    rgba(30, 40, 8, 0.62) 0%,
+    rgba(30, 40, 8, 0.42) 26%,
+    rgba(30, 40, 8, 0.14) 44%,
+    transparent 58%);
+}
 .hpanel.hp-first .hp-kicker,
 .hpanel.hp-first .hp-head,
-.hpanel.hp-first .hp-ko { text-shadow: 0 2px 20px rgba(40, 55, 10, 0.35); }
+.hpanel.hp-first .hp-ko { text-shadow: 0 2px 22px rgba(20, 28, 4, 0.5); }
 @media (max-width: 680px) {
-  /* 모바일은 이미지가 얼굴로 꽉 차 텍스트 대비 확보용 옅은 스크림 */
+  /* 모바일은 얼굴이 화면을 꽉 채우므로 하단까지 옅게 보강 */
   .hpanel.hp-first::after {
-    display: block;
-    background: linear-gradient(180deg, rgba(10, 10, 12, 0.15) 0%, transparent 30%, rgba(10, 10, 12, 0.45) 100%);
+    background:
+      linear-gradient(90deg, rgba(20, 28, 4, 0.55) 0%, rgba(20, 28, 4, 0.2) 45%, transparent 65%),
+      linear-gradient(180deg, transparent 40%, rgba(10, 12, 4, 0.45) 100%);
   }
 }
 .hp-content {
@@ -453,7 +460,7 @@ img { max-width: 100%; }
 /* Made with AI — 모델 얼굴 옆, 확대 + 마크(+/×) 회전→직선 전환 + 깜빡이는 점 */
 .hp-ai {
   position: absolute; z-index: 3;
-  right: clamp(20px, 6vw, 120px); top: 44%;
+  right: clamp(20px, 6vw, 120px); top: 60%;
   display: flex; align-items: center; gap: 14px;
   font-size: clamp(18px, 1.7vw, 25px); font-weight: 600;
   color: #fff; letter-spacing: 0.01em;
