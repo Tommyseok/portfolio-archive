@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import type { Item } from "../types";
 import type { Filters } from "../lib/filter";
 import { applyFilters } from "../lib/filter";
@@ -8,8 +8,18 @@ import { CaseView } from "../components/CaseView";
 import { useReveal } from "../lib/useReveal";
 import devSample from "../lib/devSample.json"; // TEMP-DEV
 
-const HEADLINE =
-  "We help Korea's leading brands create standout ads and campaigns at speed—from concept to execution to results.";
+/** 매니페스토 — 영문 스탠자 + 한글 병기 블록 (모아서 분리) */
+const MANIFESTO_EN: ReactNode[] = [
+  <>Hearts and actions become <em>numbers</em>. We create from them.</>,
+  <>No one holds more <em>data</em>. That's where great creative begins.</>,
+  <>Our creators turn insight into <em>art</em> — with instinct and craft.</>,
+];
+
+const MANIFESTO_KO = [
+  "사람의 마음과 행동은 숫자로 남습니다. 우리의 크리에이티브는 그 숫자 위에서 시작됩니다.",
+  "매드업은 누구보다 많은 데이터를 가졌기에, 가장 좋은 크리에이티브를 만들 수 있습니다.",
+  "숫자에 쌓인 인사이트를 감각적인 아트웍으로 완성한 매드업의 크리에이티브를 소개합니다.",
+];
 
 /** 쇼릴 히어로 — 앰비언트 무음 루프(저용량), 스크롤 확대, 클릭 시 사운드 플레이어 전환(고화질) */
 const REEL_AMBIENT = "/showreel-lite.mp4"; // ~1.3Mbps 무음 — 느린 네트워크에서도 안 끊김
@@ -82,22 +92,21 @@ function HeroReel() {
   );
 }
 
-/** 워드 단위 스태거 리빌 헤드라인 */
+/** 매니페스토 섹션 — 영문 스탠자 → 한글 블록 → 스탯 */
 function Statement({ count, clients }: { count: number; clients: number }) {
-  const { ref, seen } = useReveal<HTMLElement>(0.3);
-  const words = HEADLINE.split(" ");
+  const { ref, seen } = useReveal<HTMLElement>(0.18);
   return (
-    <section ref={ref} className={"statement" + (seen ? " in" : "")}>
-      <h1>
-        {words.map((w, i) => (
-          <span key={i}>
-            <span className="w" style={{ "--i": i } as CSSProperties}>
-              {w === "standout" ? <em>{w}</em> : w}
-            </span>{" "}
-          </span>
+    <section ref={ref} className={"manifesto" + (seen ? " in" : "")}>
+      <div className="mf-kicker">Madup creative manifesto</div>
+      <div className="mf-lines">
+        {MANIFESTO_EN.map((line, i) => (
+          <h2 key={i} className="mf-line" style={{ "--i": i } as CSSProperties}>{line}</h2>
         ))}
-      </h1>
-      <div className="sub">
+      </div>
+      <div className="mf-ko-block">
+        {MANIFESTO_KO.map((line) => <p key={line}>{line}</p>)}
+      </div>
+      <div className={"mf-sub" + (seen ? " in" : "")}>
         {count} selected works · {clients} brands — 촬영 숏폼부터 생성형 AI 이미지·영상까지
       </div>
     </section>
