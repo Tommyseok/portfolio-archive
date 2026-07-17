@@ -11,7 +11,7 @@ import devSample from "../lib/devSample.json"; // TEMP-DEV
 /** 히어로 패널 3장 — Superside 스타일, 메시지당 이미지 하나 (원본 이미지 + 라이브 타이포) */
 const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; ko: ReactNode; en: string; ai?: boolean }[] = [
   {
-    img: "/hero-ai.jpg", // 힉스필드 AI 생성 — 레몬키위샷 모델 (메인 히어로, 16:9 페이스밴드 크롭)
+    img: "/hero-ai.jpg", // 힉스필드 AI 생성 — 레몬키위샷 모델 (모델 우측 + 좌측 초록 여백 합성)
     objPos: "50% 42%",
     kicker: "Creative excellence",
     head: <><i>Emotional creative</i><br />from data</>,

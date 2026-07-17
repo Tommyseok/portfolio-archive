@@ -403,6 +403,18 @@ img { max-width: 100%; }
     linear-gradient(90deg, rgba(8, 8, 10, 0.74) 0%, rgba(8, 8, 10, 0.32) 42%, rgba(10, 10, 12, 0.08) 62%, rgba(10, 10, 12, 0.28) 100%),
     linear-gradient(180deg, rgba(10, 10, 12, 0.1) 0%, transparent 35%, rgba(10, 10, 12, 0.52) 100%);
 }
+/* 첫 패널: 좌측 초록 여백에 텍스트가 놓이므로 디밍(스크림) 제거 — 원본 밝기 유지 */
+.hpanel.hp-first::after { display: none; }
+.hpanel.hp-first .hp-kicker,
+.hpanel.hp-first .hp-head,
+.hpanel.hp-first .hp-ko { text-shadow: 0 2px 20px rgba(40, 55, 10, 0.35); }
+@media (max-width: 680px) {
+  /* 모바일은 이미지가 얼굴로 꽉 차 텍스트 대비 확보용 옅은 스크림 */
+  .hpanel.hp-first::after {
+    display: block;
+    background: linear-gradient(180deg, rgba(10, 10, 12, 0.15) 0%, transparent 30%, rgba(10, 10, 12, 0.45) 100%);
+  }
+}
 .hp-content {
   position: relative; z-index: 2;
   padding: clamp(90px, 14vh, 150px) clamp(24px, 5vw, 84px) clamp(54px, 9vh, 104px);
