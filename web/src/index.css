@@ -391,8 +391,8 @@ img { max-width: 100%; }
   display: flex; align-items: flex-end;
   color: #fff; background: #101014;
 }
-/* 첫 패널은 내비 아래까지 꽉 차게 (오버레이 내비) */
-.hpanel.hp-first { min-height: 100dvh; }
+/* 첫 패널은 내비 아래까지 꽉 차게 (오버레이 내비) + 카피 세로 중앙 */
+.hpanel.hp-first { min-height: 100dvh; align-items: center; }
 .hpanel .hp-bg {
   position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover;
@@ -403,12 +403,15 @@ img { max-width: 100%; }
     linear-gradient(90deg, rgba(8, 8, 10, 0.74) 0%, rgba(8, 8, 10, 0.32) 42%, rgba(10, 10, 12, 0.08) 62%, rgba(10, 10, 12, 0.28) 100%),
     linear-gradient(180deg, rgba(10, 10, 12, 0.1) 0%, transparent 35%, rgba(10, 10, 12, 0.52) 100%);
 }
-/* 첫 패널: 클로즈업 크롭(2.5:1) — 얼굴 쪽으로 앵커 */
-.hpanel.hp-first .hp-bg { object-position: 100% 50%; }
 .hp-content {
   position: relative; z-index: 2;
   padding: clamp(90px, 14vh, 150px) clamp(24px, 5vw, 84px) clamp(54px, 9vh, 104px);
   max-width: 1080px;
+}
+/* 첫 패널: 카피를 세로 중앙 부근으로 (하단 고정 X, 상단 내비 여유) */
+.hpanel.hp-first .hp-content {
+  padding-top: clamp(76px, 9vh, 120px);
+  padding-bottom: clamp(40px, 6vh, 72px);
 }
 .hp-kicker {
   font-size: 12.5px; font-weight: 700;
@@ -435,14 +438,35 @@ img { max-width: 100%; }
   font-size: clamp(13px, 1.1vw, 16px);
   font-weight: 600; opacity: 0.85;
 }
+/* Made with AI — 모델 얼굴 옆, 확대 + 라인 드로우인 + 플로팅 모션 */
 .hp-ai {
-  position: absolute; z-index: 2;
-  right: clamp(24px, 5vw, 84px); top: 46%;
-  display: flex; align-items: center; gap: 12px;
-  font-size: 14px; font-weight: 600; color: rgba(255, 255, 255, 0.95);
+  position: absolute; z-index: 3;
+  right: clamp(20px, 6vw, 110px); top: 40%;
+  display: flex; align-items: center; gap: 14px;
+  font-size: clamp(17px, 1.6vw, 23px); font-weight: 600;
+  color: #fff; letter-spacing: 0.01em;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
+  animation: hp-ai-float 4.5s ease-in-out infinite;
+  cursor: default; user-select: none;
 }
-.hp-ai::before { content: ""; width: 44px; height: 1px; background: rgba(255, 255, 255, 0.7); }
-@media (max-width: 680px) { .hp-ai { display: none; } }
+.hp-ai-track {
+  display: block; height: 1.5px; width: 0;
+  background: #fff; flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: width 0.9s var(--ease) 0.55s;
+}
+.hpanel.in .hp-ai-track { width: clamp(40px, 5vw, 80px); }
+.hp-ai:hover .hp-ai-track { width: clamp(64px, 8vw, 130px); }
+.hp-ai-txt i {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic; font-weight: 400; letter-spacing: 0;
+}
+@keyframes hp-ai-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@media (max-width: 680px) {
+  .hp-ai { right: 16px; top: 32%; font-size: 15px; }
+  .hp-ai-track { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .hp-ai { animation: none; } }
 
 /* 패널 텍스트 순차 리빌 */
 .hp-content > * {

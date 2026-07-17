@@ -9,9 +9,19 @@ import { useReveal } from "../lib/useReveal";
 import devSample from "../lib/devSample.json"; // TEMP-DEV
 
 /** 히어로 패널 3장 — Superside 스타일, 메시지당 이미지 하나 (원본 이미지 + 라이브 타이포) */
-const PANELS: { img: string; kicker: string; head: ReactNode; ko: ReactNode; en: string; ai?: boolean }[] = [
+const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; ko: ReactNode; en: string; ai?: boolean }[] = [
+  {
+    img: "/hero-ai.jpg", // 힉스필드 AI 생성 — 레몬키위샷 모델 (메인 히어로)
+    objPos: "56% 22%", // 이마가 더 보이도록 상단 앵커
+    kicker: "AI excellence",
+    head: <><i>Emotional creative</i><br />from data</>,
+    ko: <>소비자의 마음을 움직인,<br />데이터로 만든 크리에이티브를 소개합니다.</>,
+    en: "Our creators turn insight into art — with instinct and craft.",
+    ai: true,
+  },
   {
     img: "/hero-night2.jpg", // 힉스필드 생성 — 디자이너 얼굴 참조, 야간 편집 클로즈업 크롭
+    objPos: "100% 50%",
     kicker: "Data-driven creative",
     head: <>Creative <i>with data</i></>,
     ko: <>사람의 마음과 행동은 숫자로 남습니다.<br />매드업의 크리에이티브는 그 숫자 위에서 시작됩니다.</>,
@@ -24,22 +34,19 @@ const PANELS: { img: string; kicker: string; head: ReactNode; ko: ReactNode; en:
     ko: <>누구보다 많은 데이터를 가졌기에,<br />가장 좋은 크리에이티브를 만들 수 있습니다.</>,
     en: "No one holds more data. That's where great creative begins.",
   },
-  {
-    img: "/hero-ai.jpg",
-    kicker: "AI excellence",
-    head: <>AI is the new <i>creative standard</i></>,
-    ko: <>숫자에 쌓인 인사이트를 감각적인 아트웍으로 완성한<br />크리에이티브를 소개합니다.</>,
-    en: "Our creators turn insight into art — with instinct and craft.",
-    ai: true,
-  },
 ];
 
 function HeroPanel({ p, first }: { p: (typeof PANELS)[number]; first?: boolean }) {
   const { ref, seen } = useReveal<HTMLElement>(0.25);
   return (
     <section ref={ref} className={"hpanel" + (first ? " hp-first" : "") + (seen ? " in" : "")}>
-      <img className="hp-bg" src={p.img} alt="" />
-      {p.ai && <span className="hp-ai">Made with AI</span>}
+      <img className="hp-bg" src={p.img} alt="" style={p.objPos ? { objectPosition: p.objPos } : undefined} />
+      {p.ai && (
+        <span className="hp-ai">
+          <span className="hp-ai-track" />
+          <span className="hp-ai-txt">Made <i>with AI</i></span>
+        </span>
+      )}
       <div className="hp-content">
         <div className="hp-kicker">{p.kicker}</div>
         <h1 className="hp-head">{p.head}</h1>
