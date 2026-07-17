@@ -11,11 +11,26 @@ import devSample from "../lib/devSample.json"; // TEMP-DEV
 const HEADLINE =
   "We help Korea's leading brands create standout ads and campaigns at speed—from concept to execution to results.";
 
-/** 쇼릴 히어로 — 앰비언트 무음 루프, 스크롤 확대, 클릭 시 사운드 플레이어 전환 */
+/** 쇼릴 히어로 — 앰비언트 무음 루프(저용량), 스크롤 확대, 클릭 시 사운드 플레이어 전환(고화질) */
+const REEL_AMBIENT = "/showreel-lite.mp4"; // ~1.3Mbps 무음 — 느린 네트워크에서도 안 끊김
+const REEL_FULL = "/showreel.mp4";         // 고화질 + 오디오 — 플레이어 모드 전용
+
 function HeroReel() {
   const wrapRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
+
+  // 모드 전환 시 소스·상태 구성 (src 는 render 에서 playing 값으로 바뀜)
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (playing) {
+      v.muted = false; v.controls = true; v.loop = false; v.currentTime = 0;
+    } else {
+      v.muted = true; v.controls = false; v.loop = true;
+    }
+    void v.play().catch(() => {});
+  }, [playing]);
 
   // 스크롤 진행도 0→1 을 CSS 변수로 (프레임 scale 0.9→1)
   useEffect(() => {
@@ -30,40 +45,21 @@ function HeroReel() {
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
   }, []);
 
-  /** 앰비언트(무음 루프) → 플레이어(사운드 + 네이티브 플레이바) */
-  const enterPlayer = () => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = false;
-    v.controls = true;
-    v.loop = false;
-    v.currentTime = 0;
-    void v.play();
-    setPlaying(true);
-  };
-  /** 재생 종료 시 다시 앰비언트로 */
-  const exitPlayer = () => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = true;
-    v.controls = false;
-    v.loop = true;
-    void v.play();
-    setPlaying(false);
-  };
+  const enterPlayer = () => setPlaying(true);
+  const exitPlayer = () => setPlaying(false);
 
   return (
     <section ref={wrapRef} className="reel-wrap">
       <div className="reel-frame">
         <video
           ref={videoRef}
-          src="/showreel.mp4"
+          src={playing ? REEL_FULL : REEL_AMBIENT}
           poster="/showreel-poster.jpg"
           autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           onEnded={exitPlayer}
         />
         {!playing && (
