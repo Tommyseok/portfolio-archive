@@ -1,6 +1,6 @@
 /* 크리덴셜 아카이브 디자인 시스템 — awwwards 레퍼런스, 뉴트럴 + 단일 액센트 */
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
-@import url("https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Instrument+Serif:ital@0;1&display=swap");
 
 :root {
   --bg: #f9fafb;
@@ -364,6 +364,72 @@ img { max-width: 100%; }
 /* ══════════════════════════════════════════════════════════════
    Showcase v2 — 풀블리드 쇼릴 · 스테이트먼트 · 대형 워크 그리드
    ══════════════════════════════════════════════════════════════ */
+
+/* ── 히어로 패널 3장 — Superside 스타일 (이미지 + 라이브 타이포) ── */
+.hpanel {
+  position: relative; overflow: hidden;
+  min-height: min(92dvh, 1000px);
+  display: flex; align-items: flex-end;
+  color: #fff; background: #101014;
+}
+.hpanel .hp-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+}
+.hpanel::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(10, 10, 12, 0.55) 0%, rgba(10, 10, 12, 0.15) 55%, rgba(10, 10, 12, 0.3) 100%),
+    linear-gradient(180deg, rgba(10, 10, 12, 0.1) 0%, transparent 35%, rgba(10, 10, 12, 0.5) 100%);
+}
+.hp-content {
+  position: relative; z-index: 2;
+  padding: clamp(90px, 14vh, 150px) clamp(24px, 5vw, 84px) clamp(54px, 9vh, 104px);
+  max-width: 1080px;
+}
+.hp-kicker {
+  font-size: 12.5px; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  opacity: 0.92; margin-bottom: clamp(18px, 3vh, 30px);
+}
+.hp-head {
+  margin: 0;
+  font-size: clamp(38px, 5.4vw, 78px);
+  font-weight: 650; letter-spacing: -0.03em; line-height: 1.04;
+}
+.hp-head i {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic; font-weight: 400; letter-spacing: 0;
+}
+.hp-ko {
+  margin: clamp(20px, 3.5vh, 34px) 0 0;
+  font-size: clamp(17px, 1.9vw, 25px);
+  font-weight: 700; line-height: 1.55;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.3);
+}
+.hp-en {
+  margin: 14px 0 0;
+  font-size: clamp(13px, 1.1vw, 16px);
+  font-weight: 600; opacity: 0.85;
+}
+.hp-ai {
+  position: absolute; z-index: 2;
+  right: clamp(24px, 5vw, 84px); top: 46%;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 14px; font-weight: 600; color: rgba(255, 255, 255, 0.95);
+}
+.hp-ai::before { content: ""; width: 44px; height: 1px; background: rgba(255, 255, 255, 0.7); }
+@media (max-width: 680px) { .hp-ai { display: none; } }
+
+/* 패널 텍스트 순차 리빌 */
+.hp-content > * {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+.hpanel.in .hp-content > * { opacity: 1; transform: none; }
+.hpanel.in .hp-content > *:nth-child(2) { transition-delay: 0.1s; }
+.hpanel.in .hp-content > *:nth-child(3) { transition-delay: 0.2s; }
+.hpanel.in .hp-content > *:nth-child(4) { transition-delay: 0.3s; }
 
 /* ── 쇼릴 히어로 — 라운드 프레임 + 스크롤 확대 + 사운드 플레이어 ── */
 .reel-wrap { padding: 22px clamp(10px, 1.4vw, 24px) 0; }
