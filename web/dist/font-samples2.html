@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Diphylleia&family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/complete/WantedSansVariable.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+  @font-face {
+    font-family: "GmarketSans";
+    src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff");
+    font-weight: 500;
+  }
+  @font-face {
+    font-family: "GmarketSans";
+    src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff");
+    font-weight: 700;
+  }
+  body { margin: 0; background: #f4f4f5; font-family: Pretendard, sans-serif; padding: 24px; }
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .tile {
+    position: relative; height: 230px; border-radius: 4px; overflow: hidden;
+    background: linear-gradient(135deg, #23262e 0%, #3a3f4b 55%, #6b5a4e 100%);
+    display: flex; align-items: flex-end; padding: 20px 22px; box-sizing: border-box;
+  }
+  .tile::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(10,10,12,.55));
+  }
+  .tag {
+    position: absolute; top: 14px; left: 16px; z-index: 2;
+    font-size: 12px; font-weight: 700; letter-spacing: .06em; color: #fff;
+    background: rgba(0,0,0,.5); padding: 5px 12px; border-radius: 999px;
+  }
+  .label { position: relative; color: #fff; width: 100%; }
+  .name { font-size: 40px; line-height: 1.05; display: flex; align-items: baseline; gap: 10px; }
+  .name .en { margin-left: 14px; }
+  .plus { font-family: Pretendard, sans-serif; font-weight: 300; font-size: .6em; }
+  .svc { margin-top: 8px; font-family: Pretendard, sans-serif; font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.72); }
+
+  .f-diph { font-family: Diphylleia, serif; }
+  .f-dodum { font-family: "Gowun Dodum", sans-serif; }
+  .f-plex { font-family: "IBM Plex Sans KR", sans-serif; font-weight: 600; letter-spacing: -0.02em; }
+  .f-suit { font-family: "SUIT Variable", SUIT, sans-serif; font-weight: 650; letter-spacing: -0.02em; }
+  .f-want { font-family: "Wanted Sans Variable", "Wanted Sans", sans-serif; font-weight: 650; letter-spacing: -0.02em; }
+  .f-gmkt { font-family: GmarketSans, sans-serif; font-weight: 500; letter-spacing: -0.01em; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="tile"><span class="tag">G · Diphylleia (세리프)</span><div class="label"><div class="name f-diph">무신사<span class="plus">+</span><span class="en">29CM</span></div><div class="svc">Static design, Banner</div></div></div>
+  <div class="tile"><span class="tag">H · Gowun Dodum (소프트 산스)</span><div class="label"><div class="name f-dodum">무신사<span class="plus">+</span><span class="en">29CM</span></div><div class="svc">Static design, Banner</div></div></div>
+  <div class="tile"><span class="tag">I · IBM Plex Sans KR 세미볼드</span><div class="label"><div class="name f-plex">무신사<span class="plus">+</span><span class="en">29CM</span></div><div class="svc">Static design, Banner</div></div></div>
+  <div class="tile"><span class="tag">J · SUIT 세미볼드</span><div class="label"><div class="name f-suit">무신사<span class="plus">+</span><span class="en">29CM</span></div><div class="svc">Static design, Banner</div></div></div>
+  <div class="tile"><span class="tag">K · Wanted Sans 세미볼드</span><div class="label"><div class="name f-want">무신사<span class="plus">+</span><span class="en">29CM</span></div><div class="svc">Static design, Banner</div></div></div>
+  <div class="tile"><span class="tag">L · Gmarket Sans 미디엄</span><div class="label"><div class="name f-gmkt">무신사<span class="plus">+</span><span class="en">29CM</span></div><div class="svc">Static design, Banner</div></div></div>
+</div>
+</body>
+</html>
