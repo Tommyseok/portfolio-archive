@@ -11,7 +11,7 @@ import devSample from "../lib/devSample.json"; // TEMP-DEV
 /** 히어로 패널 3장 — Superside 스타일, 메시지당 이미지 하나 (원본 이미지 + 라이브 타이포) */
 const PANELS: { img: string; kicker: string; head: ReactNode; ko: ReactNode; en: string; ai?: boolean }[] = [
   {
-    img: "/hero-data.jpg",
+    img: "/hero-night.jpg", // 힉스필드 생성 — 사내 디자이너 얼굴 참조, 야간 편집 씬
     kicker: "Data-driven creative",
     head: <>Creative <i>with data</i></>,
     ko: <>사람의 마음과 행동은 숫자로 남습니다.<br />매드업의 크리에이티브는 그 숫자 위에서 시작됩니다.</>,
