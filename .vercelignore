@@ -1,0 +1,9 @@
+front_image/
+data/
+docs/
+sync/
+project/
+credentials.json
+token.json
+.env
+.env.*
