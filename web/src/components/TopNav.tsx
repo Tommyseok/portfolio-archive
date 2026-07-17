@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 
@@ -8,8 +9,21 @@ export function TopNav({ session, isStaff, q, setQ }: {
   q: string;
   setQ: (v: string) => void;
 }) {
+  const { pathname } = useLocation();
+  // Showcase(/)에서는 히어로 패널 위에 투명 오버레이로 떠 있다가, 스크롤하면 라이트 바로 전환
+  const overlay = pathname === "/";
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!overlay) return;
+    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.55);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [overlay]);
+
   return (
-    <header className="topnav">
+    <header className={"topnav" + (overlay ? " fixed" + (scrolled ? "" : " dark") : "")}>
       <div className="container topnav-in">
         <NavLink to="/" className="brand">madup<b>.</b> credential</NavLink>
         <nav className="nav-links">

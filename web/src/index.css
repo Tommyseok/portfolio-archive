@@ -46,7 +46,26 @@ img { max-width: 100%; }
   position: sticky; top: 0; z-index: 40;
   background: rgba(249, 250, 251, 0.85);
   backdrop-filter: blur(14px);
+  transition: background 0.35s var(--ease);
 }
+/* Showcase: 히어로 위 고정 오버레이 */
+.topnav.fixed { position: fixed; left: 0; right: 0; top: 0; }
+.topnav.dark {
+  background: linear-gradient(180deg, rgba(10, 10, 12, 0.5), transparent);
+  backdrop-filter: none;
+}
+.topnav.dark .brand, .topnav.dark .nav-link { color: #fff; }
+.topnav.dark .brand b { color: #fff; }
+.topnav.dark .nav-link:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+.topnav.dark .nav-link.active { background: #fff; color: var(--ink); }
+.topnav.dark .nav-search {
+  background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.28);
+  color: #fff; backdrop-filter: blur(8px);
+}
+.topnav.dark .nav-search input { color: #fff; }
+.topnav.dark .nav-search input::placeholder { color: rgba(255, 255, 255, 0.65); }
+.topnav.dark .btn { background: #fff; border-color: #fff; color: var(--ink); }
+.topnav.dark .btn.ghost { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.3); color: #fff; }
 .topnav-in { display: flex; align-items: center; gap: 28px; height: 62px; }
 .brand { font-weight: 800; font-size: 19px; letter-spacing: -0.04em; }
 .brand b { color: var(--accent); }
@@ -372,6 +391,8 @@ img { max-width: 100%; }
   display: flex; align-items: flex-end;
   color: #fff; background: #101014;
 }
+/* 첫 패널은 내비 아래까지 꽉 차게 (오버레이 내비) */
+.hpanel.hp-first { min-height: 100dvh; }
 .hpanel .hp-bg {
   position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover;

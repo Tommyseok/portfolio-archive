@@ -34,10 +34,10 @@ const PANELS: { img: string; kicker: string; head: ReactNode; ko: ReactNode; en:
   },
 ];
 
-function HeroPanel({ p }: { p: (typeof PANELS)[number] }) {
+function HeroPanel({ p, first }: { p: (typeof PANELS)[number]; first?: boolean }) {
   const { ref, seen } = useReveal<HTMLElement>(0.25);
   return (
-    <section ref={ref} className={"hpanel" + (seen ? " in" : "")}>
+    <section ref={ref} className={"hpanel" + (first ? " hp-first" : "") + (seen ? " in" : "")}>
       <img className="hp-bg" src={p.img} alt="" />
       {p.ai && <span className="hp-ai">Made with AI</span>}
       <div className="hp-content">
@@ -152,7 +152,7 @@ export function Showcase({ items, loading, filters, setFilters, staff }: {
 
   return (
     <>
-      {PANELS.map((p) => <HeroPanel key={p.img} p={p} />)}
+      {PANELS.map((p, i) => <HeroPanel key={p.img} p={p} first={i === 0} />)}
 
       <HeroReel />
 
