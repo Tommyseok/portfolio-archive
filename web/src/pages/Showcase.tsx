@@ -11,12 +11,12 @@ import devSample from "../lib/devSample.json"; // TEMP-DEV
 /** 히어로 패널 3장 — Superside 스타일, 메시지당 이미지 하나 (원본 이미지 + 라이브 타이포) */
 const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; ko: ReactNode; en: string; ai?: boolean }[] = [
   {
-    img: "/hero-ai.jpg", // 힉스필드 AI 생성 — 레몬키위샷 모델 (메인 히어로)
-    objPos: "56% 22%", // 이마가 더 보이도록 상단 앵커
-    kicker: "AI excellence",
+    img: "/hero-ai.jpg", // 힉스필드 AI 생성 — 레몬키위샷 모델 (메인 히어로, 16:9 페이스밴드 크롭)
+    objPos: "50% 42%",
+    kicker: "Creative excellence",
     head: <><i>Emotional creative</i><br />from data</>,
     ko: <>소비자의 마음을 움직인,<br />데이터로 만든 크리에이티브를 소개합니다.</>,
-    en: "Our creators turn insight into art — with instinct and craft.",
+    en: "",
     ai: true,
   },
   {
@@ -43,15 +43,15 @@ function HeroPanel({ p, first }: { p: (typeof PANELS)[number]; first?: boolean }
       <img className="hp-bg" src={p.img} alt="" style={p.objPos ? { objectPosition: p.objPos } : undefined} />
       {p.ai && (
         <span className="hp-ai">
-          <span className="hp-ai-track" />
-          <span className="hp-ai-txt">Made <i>with AI</i></span>
+          <span className="hp-ai-mark" aria-hidden="true"><i className="bar bar-h" /><i className="bar bar-v" /></span>
+          <span className="hp-ai-txt">Made <i>with AI</i><b className="hp-ai-dot">.</b></span>
         </span>
       )}
       <div className="hp-content">
         <div className="hp-kicker">{p.kicker}</div>
         <h1 className="hp-head">{p.head}</h1>
         <p className="hp-ko">{p.ko}</p>
-        <p className="hp-en">{p.en}</p>
+        {p.en && <p className="hp-en">{p.en}</p>}
       </div>
     </section>
   );
