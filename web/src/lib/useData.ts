@@ -44,6 +44,75 @@ export function useItems(deps: unknown[] = []) {
   return { items, loading, error, reload };
 }
 
+/* ── 소셜 레이어: 좋아요·코멘트 (매드업 구성원 전용) ── */
+
+export interface SocialState {
+  likes: Record<string, string[]>;        // item_id → 좋아요 누른 이메일들
+  commentCounts: Record<string, number>;  // item_id → 코멘트 수
+}
+
+export function useSocial(deps: unknown[] = []) {
+  const [social, setSocial] = useState<SocialState>({ likes: {}, commentCounts: {} });
+
+  const reloadSocial = useCallback(async () => {
+    const [lk, cm] = await Promise.all([
+      supabase.from("credential_likes").select("item_id,user_email").range(0, 9999),
+      supabase.from("credential_comments").select("item_id").range(0, 9999),
+    ]);
+    const likes: Record<string, string[]> = {};
+    for (const r of lk.data ?? []) (likes[r.item_id] ??= []).push(r.user_email);
+    const commentCounts: Record<string, number> = {};
+    for (const r of cm.data ?? []) commentCounts[r.item_id] = (commentCounts[r.item_id] ?? 0) + 1;
+    setSocial({ likes, commentCounts });
+  }, []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { void reloadSocial(); }, deps);
+  return { social, reloadSocial };
+}
+
+export async function toggleLike(itemId: string, email: string, liked: boolean) {
+  const { error } = liked
+    ? await supabase.from("credential_likes").delete().eq("item_id", itemId).eq("user_email", email)
+    : await supabase.from("credential_likes").insert({ item_id: itemId, user_email: email });
+  if (error) throw new Error(error.message);
+}
+
+export interface CommentRow {
+  id: string;
+  item_id: string;
+  author_email: string;
+  body: string;
+  created_at: string;
+}
+
+export async function fetchComments(itemId: string): Promise<CommentRow[]> {
+  const { data, error } = await supabase
+    .from("credential_comments")
+    .select("*")
+    .eq("item_id", itemId)
+    .order("created_at", { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data as CommentRow[]) ?? [];
+}
+
+export async function addComment(itemId: string, email: string, body: string) {
+  const { error } = await supabase
+    .from("credential_comments")
+    .insert({ item_id: itemId, author_email: email, body });
+  if (error) throw new Error(error.message);
+}
+
+export async function deleteComment(id: string) {
+  const { error } = await supabase.from("credential_comments").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+/** 공개 토글 — 누가 전환했는지는 DB 트리거가 credential_publish_log 에 자동 기록 */
+export async function togglePublish(item: Pick<Item, "id" | "showcase_approved">, email: string) {
+  await saveOverlay(item.id, { showcase_approved: !item.showcase_approved }, email);
+}
+
 /** 편집 레이어 저장 */
 export async function saveOverlay(
   id: string,

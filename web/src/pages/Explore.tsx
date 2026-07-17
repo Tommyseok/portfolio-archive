@@ -7,6 +7,8 @@ import { FilterBar } from "../components/FilterBar";
 import { ItemGrid } from "../components/ItemGrid";
 import { ItemModal } from "../components/ItemModal";
 import { LoginGate } from "../components/LoginGate";
+import { useSocial, toggleLike, togglePublish } from "../lib/useData";
+import devSample from "../lib/devSample.json"; // TEMP-DEV
 
 export function Explore({ items, loading, filters, setFilters, staff, ready, email, onSaved }: {
   items: Item[];
@@ -20,6 +22,21 @@ export function Explore({ items, loading, filters, setFilters, staff, ready, ema
 }) {
   const [open, setOpen] = useState<Item | null>(null);
   const [params, setParams] = useSearchParams();
+  const { social, reloadSocial } = useSocial([email ?? "anon"]);
+
+  /** 좋아요 토글 — 즉시 반영 후 서버 동기화 */
+  const handleLike = (it: Item) => {
+    if (!email) return;
+    const liked = (social.likes[it.id] ?? []).includes(email);
+    void toggleLike(it.id, email, liked).then(reloadSocial).catch(reloadSocial);
+  };
+
+  /** 공개 토글 — 전환 이력은 DB 트리거가 자동 기록 */
+  const handlePublish = (it: Item) => {
+    if (!email) return;
+    if (!it.showcase_approved && !window.confirm(`'${it.client} — ${it.title}'\n외부 Showcase에 공개할까요? (누가 공개했는지 기록됩니다)`)) return;
+    void togglePublish(it, email).then(onSaved);
+  };
 
   // Directory 에서 넘어온 프리셋 (?client=… / ?team=… / ?creator=…)
   useEffect(() => {
@@ -40,17 +57,24 @@ export function Explore({ items, loading, filters, setFilters, staff, ready, ema
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
-  const filtered = useMemo(() => applyFilters(items, filters), [items, filters]);
+  // TEMP-DEV: 로그인 없는 로컬 dev 에서 UI 확인용 샘플 (프로덕션 번들에선 제거됨)
+  const devPreview = import.meta.env.DEV && ready && !staff;
+  const pool = devPreview ? (devSample as unknown as Item[]) : items;
+  const filtered = useMemo(() => applyFilters(pool, filters), [pool, filters]);
 
   if (!ready) return <div className="container grid">{Array.from({ length: 6 }, (_, i) => <div key={i} className="skel" />)}</div>;
-  if (!staff) return <LoginGate />;
+  if (!staff && !devPreview) return <LoginGate />;
 
   return (
     <>
-      <FilterBar items={items} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Explore" />
-      <ItemGrid items={filtered} onOpen={setOpen} staff={staff} loading={loading} />
+      <FilterBar items={pool} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Explore" />
+      <ItemGrid items={filtered} onOpen={setOpen} staff={staff} loading={loading}
+        email={email} social={social} onToggleLike={handleLike} onTogglePublish={handlePublish} />
       <ItemModal item={open} onClose={() => setOpen(null)} staff={staff} email={email}
-        onSaved={() => { onSaved(); setOpen(null); }} />
+        onSaved={() => { onSaved(); setOpen(null); }}
+        likers={open ? social.likes[open.id] ?? [] : []}
+        onToggleLike={handleLike}
+        onSocialChanged={() => void reloadSocial()} />
     </>
   );
 }

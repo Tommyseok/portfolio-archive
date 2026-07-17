@@ -1,7 +1,79 @@
 import { useEffect, useRef, useState } from "react";
 import type { Item } from "../types";
 import { SOURCE_TEAM_LABELS, MEDIA_TAXONOMY, PRODUCTION_METHODS, PRODUCTION_TEAMS, tagsOf } from "../types";
-import { saveOverlay, uploadExtraImage } from "../lib/useData";
+import { saveOverlay, uploadExtraImage, fetchComments, addComment, deleteComment, type CommentRow } from "../lib/useData";
+
+const nameOf = (email: string) => email.split("@")[0];
+const timeOf = (iso: string) => {
+  const d = new Date(iso);
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+};
+
+/** 코멘트 스레드 — 열릴 때 로드, 본인 것만 삭제 가능 */
+function Comments({ item, email, onChanged }: { item: Item; email: string | null; onChanged: () => void }) {
+  const [rows, setRows] = useState<CommentRow[]>([]);
+  const [draft, setDraft] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setRows([]); setDraft("");
+    void fetchComments(item.id).then(setRows).catch(() => setRows([]));
+  }, [item.id]);
+
+  const submit = async () => {
+    const body = draft.trim();
+    if (!body || !email) return;
+    setBusy(true);
+    try {
+      await addComment(item.id, email, body);
+      setDraft("");
+      setRows(await fetchComments(item.id));
+      onChanged();
+    } finally { setBusy(false); }
+  };
+  const remove = async (id: string) => {
+    setBusy(true);
+    try {
+      await deleteComment(id);
+      setRows((r) => r.filter((c) => c.id !== id));
+      onChanged();
+    } finally { setBusy(false); }
+  };
+
+  return (
+    <div style={{ marginTop: 18, borderTop: "1px solid var(--line-soft)", paddingTop: 14 }}>
+      <div style={{ fontWeight: 800, fontSize: 13.5 }}>코멘트 {rows.length > 0 && <span style={{ color: "var(--ink-3)", fontFamily: "var(--mono)", fontSize: 12 }}>{rows.length}</span>}</div>
+      <div className="cmt-list">
+        {rows.map((c) => (
+          <div key={c.id} className="cmt">
+            <div className="cmt-avatar">{nameOf(c.author_email).slice(0, 2)}</div>
+            <div className="cmt-body">
+              <div className="cmt-head">
+                <span className="cmt-author">{nameOf(c.author_email)}</span>
+                <span className="cmt-time">{timeOf(c.created_at)}</span>
+                {email === c.author_email && (
+                  <button className="cmt-del" onClick={() => void remove(c.id)} disabled={busy}>삭제</button>
+                )}
+              </div>
+              <div className="cmt-text">{c.body}</div>
+            </div>
+          </div>
+        ))}
+        {rows.length === 0 && <div style={{ fontSize: 12.5, color: "var(--ink-3)" }}>첫 코멘트를 남겨보세요.</div>}
+      </div>
+      <div className="cmt-form">
+        <input
+          className="input"
+          placeholder="코멘트 입력 후 Enter"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) { e.preventDefault(); void submit(); } }}
+        />
+        <button className="btn" onClick={() => void submit()} disabled={busy || !draft.trim()}>등록</button>
+      </div>
+    </div>
+  );
+}
 
 /** 크리에이티브 캐러셀 — 추출된 소재 이미지들을 스냅 스크롤로, 없으면 슬라이드 캡처 1장 */
 function Carousel({ item }: { item: Item }) {
@@ -69,12 +141,15 @@ function TagEditor({ tags, setTags }: { tags: string[]; setTags: (t: string[]) =
   );
 }
 
-export function ItemModal({ item, onClose, staff, email, onSaved }: {
+export function ItemModal({ item, onClose, staff, email, onSaved, likers = [], onToggleLike, onSocialChanged }: {
   item: Item | null;
   onClose: () => void;
   staff: boolean;
   email: string | null;
   onSaved: () => void;
+  likers?: string[];
+  onToggleLike?: (i: Item) => void;
+  onSocialChanged?: () => void;
 }) {
   const [edit, setEdit] = useState(false);
   const [desc, setDesc] = useState("");
@@ -148,8 +223,25 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
             {item.is_bidding && <span className="badge bidding">비딩 제안</span>}
             {item.showcase_approved && staff && <span className="badge showcase">Showcase 공개중</span>}
           </div>
-          <h2>{item.client}</h2>
-          <div style={{ color: "var(--ink-2)", fontSize: 14, marginTop: 2 }}>{item.title}</div>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h2>{item.client}</h2>
+              <div style={{ color: "var(--ink-2)", fontSize: 14, marginTop: 2 }}>{item.title}</div>
+            </div>
+            {onToggleLike && (
+              <button
+                className={"act" + (email && likers.includes(email) ? " liked" : "")}
+                onClick={() => onToggleLike(item)}
+                aria-label="좋아요"
+                style={{ flexShrink: 0 }}
+              >
+                <svg viewBox="0 0 24 24" fill={email && likers.includes(email) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ width: 15, height: 15 }}>
+                  <path d="M19 14c1.5-1.5 2.5-3 2.5-5A4.5 4.5 0 0 0 17 4.5c-2 0-3.6 1-5 3-1.4-2-3-3-5-3A4.5 4.5 0 0 0 2.5 9c0 2 1 3.5 2.5 5l7 7 7-7Z" />
+                </svg>
+                {likers.length > 0 && likers.length}
+              </button>
+            )}
+          </div>
 
           {!edit && (
             <>
@@ -201,6 +293,7 @@ export function ItemModal({ item, onClose, staff, email, onSaved }: {
                   ))}
                 </div>
               )}
+              <Comments item={item} email={email} onChanged={() => onSocialChanged?.()} />
               {staff && (
                 <div style={{ display: "flex", gap: 8, marginTop: 18, borderTop: "1px solid var(--line-soft)", paddingTop: 14 }}>
                   <button className="btn ghost" onClick={() => setEdit(true)}>편집</button>
