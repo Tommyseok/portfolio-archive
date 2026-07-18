@@ -14,8 +14,8 @@ const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; k
     img: "/hero-ai.jpg", // 힉스필드 아웃페인트 — 좌측 초록 자연 확장, 모델 우측
     objPos: "60% 46%",
     kicker: "Creative Excellence",
-    head: <><i>Emotional creative</i><br />from data</>,
-    ko: <>소비자 마음을 움직이는 크리에이티브를,<br />데이터로 설계합니다.</>,
+    head: <>Emotional creative<br /><i>from data</i></>,
+    ko: <>소비자 마음을 움직이는 크리에이티브,<br />데이터로 설계 합니다.</>,
     en: "",
     ai: true,
   },
