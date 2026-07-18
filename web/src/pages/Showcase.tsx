@@ -14,7 +14,7 @@ const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; k
     // ① 데이터 우위 — 편집 모니터
     img: "/hero-night2.jpg",
     objPos: "20% 50%",
-    kicker: "Data advantage",
+    kicker: "Data-driven creative",
     head: <>Best creative,<br /><i>with big data</i></>,
     ko: <>누구보다 많은 데이터를 가졌기에,<br />가장 좋은 크리에이티브를 만듭니다.</>,
   },
