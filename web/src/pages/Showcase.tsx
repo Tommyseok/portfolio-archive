@@ -177,15 +177,6 @@ function MiddleStatement() {
   );
 }
 
-/** 스탯 라인 — 패널·쇼릴 아래, 그리드 위 */
-function StatsLine({ count, clients }: { count: number; clients: number }) {
-  return (
-    <div className="container" style={{ padding: "10px 28px 8px", fontFamily: "var(--mono)", fontSize: 12, color: "var(--ink-3)", letterSpacing: "0.05em" }}>
-      {count} selected works · {clients} brands — 촬영 숏폼부터 생성형 AI 이미지·영상까지
-    </div>
-  );
-}
-
 export function Showcase({ items, loading, filters, setFilters, staff }: {
   items: Item[];
   loading: boolean;
@@ -204,7 +195,6 @@ export function Showcase({ items, loading, filters, setFilters, staff }: {
     return p;
   }, [items]);
   const filtered = useMemo(() => applyFilters(pool, filters), [pool, filters]);
-  const clients = new Set(pool.map((i) => i.client)).size;
 
   return (
     <>
@@ -213,8 +203,6 @@ export function Showcase({ items, loading, filters, setFilters, staff }: {
       <HeroReel />
 
       <MiddleStatement />
-
-      <StatsLine count={pool.length} clients={clients} />
 
       {!loading && pool.length === 0 ? (
         <div className="container empty">
