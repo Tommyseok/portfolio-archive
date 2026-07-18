@@ -164,7 +164,7 @@ function HeroReel() {
 function MiddleStatement() {
   const { ref, seen } = useReveal<HTMLElement>(0.3);
   return (
-    <section ref={ref} className={"midstate" + (seen ? " in" : "")}>
+    <section ref={ref} id="showcase-work" className={"midstate" + (seen ? " in" : "")}>
       <div className="midstate-inner">
         <span className="midstate-eyebrow">Our capability</span>
         <h2 className="midstate-title">Full-Stack Creative Service<span className="midstate-dot">.</span></h2>

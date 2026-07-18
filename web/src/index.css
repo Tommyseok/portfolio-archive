@@ -388,6 +388,7 @@ img { max-width: 100%; }
 .midstate {
   max-width: 1680px; margin: 0 auto;
   padding: clamp(40px, 5vw, 72px) clamp(20px, 5vw, 72px) clamp(28px, 3.5vw, 48px);
+  scroll-margin-top: 62px; /* 스티키 내비 높이만큼 오프셋 (Showcase 앵커) */
 }
 .midstate-inner {
   border-top: 1px solid var(--line);
