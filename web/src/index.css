@@ -384,33 +384,43 @@ img { max-width: 100%; }
    Showcase v2 — 풀블리드 쇼릴 · 스테이트먼트 · 대형 워크 그리드
    ══════════════════════════════════════════════════════════════ */
 
-/* ── 중간 카피 (쇼릴 ↔ 그리드) ── */
+/* ── 중간 카피 (쇼릴 ↔ 그리드) — 좌정렬, 대형 볼드 산세 + 한글 ── */
 .midstate {
-  max-width: 1000px; margin: 0 auto;
-  padding: clamp(70px, 11vw, 140px) 28px clamp(46px, 7vw, 90px);
-  text-align: center;
+  max-width: 1680px; margin: 0 auto;
+  padding: clamp(80px, 12vw, 160px) clamp(20px, 5vw, 72px) clamp(52px, 7vw, 96px);
 }
-.midstate-kicker {
+.midstate-inner {
+  border-top: 1px solid var(--line);
+  padding-top: clamp(28px, 3.4vw, 46px);
+  max-width: 60ch;
+}
+.midstate-eyebrow {
+  display: block;
   font-family: var(--mono); font-size: 12px; font-weight: 600;
-  letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
-  display: inline-flex; align-items: center; gap: 12px;
-  opacity: 0; transform: translateY(16px);
-  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);
+  margin-bottom: clamp(20px, 2.6vw, 34px);
 }
-.midstate-kicker::before, .midstate-kicker::after {
-  content: ""; width: 26px; height: 1px; background: var(--accent); opacity: 0.5;
+.midstate-title {
+  margin: 0;
+  font-size: clamp(38px, 6.4vw, 92px);
+  font-weight: 800; letter-spacing: -0.045em; line-height: 0.98;
+  color: var(--ink);
 }
+.midstate-dot { color: var(--accent); }
 .midstate-body {
-  margin: clamp(22px, 3vw, 34px) 0 0;
-  font-size: clamp(24px, 3.4vw, 46px);
-  font-weight: 650; letter-spacing: -0.03em; line-height: 1.32;
-  text-wrap: balance;
-  opacity: 0; transform: translateY(22px);
-  transition: opacity 0.9s var(--ease) 0.12s, transform 0.9s var(--ease) 0.12s;
+  margin: clamp(24px, 3vw, 40px) 0 0;
+  font-size: clamp(17px, 1.7vw, 24px);
+  font-weight: 500; line-height: 1.62; color: var(--ink-2);
 }
-.midstate-body em { font-style: normal; color: var(--accent); }
-.midstate.in .midstate-kicker,
-.midstate.in .midstate-body { opacity: 1; transform: none; }
+.midstate-body em { font-style: normal; color: var(--accent); font-weight: 700; }
+/* 순차 리빌 */
+.midstate-eyebrow, .midstate-title, .midstate-body {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+}
+.midstate.in .midstate-eyebrow { opacity: 1; transform: none; }
+.midstate.in .midstate-title { opacity: 1; transform: none; transition-delay: 0.08s; }
+.midstate.in .midstate-body { opacity: 1; transform: none; transition-delay: 0.18s; }
 
 /* ── 히어로 패널 3장 — Superside 스타일 (이미지 + 라이브 타이포) ── */
 .hpanel {
@@ -553,13 +563,14 @@ img { max-width: 100%; }
 .hpanel.in .hp-content > *:nth-child(4) { transition-delay: 0.3s; }
 
 /* ── 쇼릴 히어로 — 라운드 프레임 + 스크롤 확대 + 사운드 플레이어 ── */
-.reel-wrap { padding: 22px clamp(10px, 1.4vw, 24px) 0; }
+/* 상단 히어로와 공백 없이 바로 이어지고, 폭을 줄여 스크롤 확대 효과를 강조 */
+.reel-wrap { padding: 0 clamp(32px, 10vw, 300px) 0; }
 .reel-frame {
   position: relative; overflow: hidden;
   border-radius: 8px;
   background: #101014;
-  /* --reel-p: 스크롤 진행도 0→1, JS 가 세팅 */
-  transform: scale(calc(0.9 + 0.1 * var(--reel-p, 0)));
+  /* --reel-p: 스크롤 진행도 0→1, JS 가 세팅 — 0.76→1 로 확대폭 강화 */
+  transform: scale(calc(0.76 + 0.24 * var(--reel-p, 0)));
   transform-origin: 50% 0%;
   will-change: transform;
 }
@@ -694,21 +705,23 @@ img { max-width: 100%; }
 .statement.in .sub { opacity: 1; }
 
 /* ── 워크 그리드 (2컬럼 풀블리드) ── */
+/* Superside our-work 스타일 — 타일 간격 0, 직각, 해상도별 양옆 여백 */
 .work-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  padding: 0 10px 10px;
+  gap: 0;
+  max-width: 1720px; margin: 0 auto;
+  padding: 0 clamp(16px, 4.5vw, 88px) 64px;
 }
 @media (max-width: 760px) { .work-grid { grid-template-columns: 1fr; } }
 
 .work-tile {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   background: #17171b;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 0;
   opacity: 0;
   transform: translateY(28px);
   transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
@@ -716,7 +729,6 @@ img { max-width: 100%; }
 .work-tile.in { opacity: 1; transform: none; }
 @media (min-width: 761px) {
   .work-tile:nth-child(even).in { transition-delay: 0.12s; }
-  .work-tile { aspect-ratio: auto; height: min(46vw, 780px); }
 }
 
 .work-tile img.wt-img {
@@ -771,11 +783,10 @@ img { max-width: 100%; }
 .work-tile:hover .wt-count { opacity: 1; }
 
 .work-skel {
-  aspect-ratio: 1 / 1; border-radius: 4px;
+  aspect-ratio: 4 / 3; border-radius: 0;
   background: linear-gradient(100deg, #eceef1 40%, #f5f6f8 50%, #eceef1 60%);
   background-size: 200% 100%; animation: shimmer 1.4s infinite;
 }
-@media (min-width: 761px) { .work-skel { aspect-ratio: auto; height: min(46vw, 780px); } }
 
 /* ── 케이스 뷰 (풀스크린 상세) ── */
 .case-view {

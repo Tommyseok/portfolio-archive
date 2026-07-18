@@ -63,12 +63,16 @@ function HeroReel() {
     void v.play().catch(() => {});
   }, [playing]);
 
-  // 스크롤 진행도 0→1 을 CSS 변수로 (프레임 scale 0.9→1)
+  // 리이 뷰포트로 들어오는 만큼 확대 (프레임 scale 0.76→1) — 진입 시 커지는 효과가 보이도록
   useEffect(() => {
     let raf = 0;
     const update = () => {
-      const p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.4)));
-      wrapRef.current?.style.setProperty("--reel-p", p.toFixed(4));
+      const el = wrapRef.current;
+      if (!el) return;
+      const vh = window.innerHeight;
+      const top = el.getBoundingClientRect().top;
+      const p = Math.min(1, Math.max(0, (vh - top) / (vh * 0.72)));
+      el.style.setProperty("--reel-p", p.toFixed(4));
     };
     const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
     update();
@@ -118,11 +122,14 @@ function MiddleStatement() {
   const { ref, seen } = useReveal<HTMLElement>(0.3);
   return (
     <section ref={ref} className={"midstate" + (seen ? " in" : "")}>
-      <div className="midstate-kicker">Full-Stack Creative Service</div>
-      <p className="midstate-body">
-        실사 촬영부터 풀 AI까지, 배너부터 오프라인까지 —<br />
-        표현에 <em>한계가 없는</em> 크리에이티브를 소개합니다.
-      </p>
+      <div className="midstate-inner">
+        <span className="midstate-eyebrow">02 — Our capability</span>
+        <h2 className="midstate-title">Full-Stack<br />Creative Service<span className="midstate-dot">.</span></h2>
+        <p className="midstate-body">
+          실사 촬영부터 풀 AI까지, 배너부터 오프라인까지 —<br />
+          표현에 <em>한계가 없는</em> 크리에이티브를 소개합니다.
+        </p>
+      </div>
     </section>
   );
 }
