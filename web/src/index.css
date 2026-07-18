@@ -50,10 +50,14 @@ img { max-width: 100%; }
 }
 /* Showcase: 히어로 위 고정 오버레이 */
 .topnav.fixed { position: fixed; left: 0; right: 0; top: 0; }
-.topnav.dark {
-  background: linear-gradient(180deg, rgba(10, 10, 12, 0.5), transparent);
-  backdrop-filter: none;
+/* 다크 음영은 별도 레이어로 opacity 페이드 → 스크롤에 따라 자연스럽게 전환 */
+.topnav::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(8, 8, 10, 0.58), rgba(8, 8, 10, 0.12) 60%, transparent);
+  opacity: 0; transition: opacity 0.45s var(--ease);
 }
+.topnav.dark::before { opacity: 1; }
+.topnav-in { position: relative; z-index: 1; }
 .topnav.dark .brand, .topnav.dark .nav-link { color: #fff; }
 .topnav.dark .brand b { color: #fff; }
 .topnav.dark .nav-link:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
@@ -67,8 +71,16 @@ img { max-width: 100%; }
 .topnav.dark .btn { background: #fff; border-color: #fff; color: var(--ink); }
 .topnav.dark .btn.ghost { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.3); color: #fff; }
 .topnav-in { display: flex; align-items: center; gap: 28px; height: 62px; }
-.brand { font-weight: 800; font-size: 19px; letter-spacing: -0.04em; }
+.brand { position: relative; font-weight: 800; font-size: 19px; letter-spacing: -0.04em; transition: color 0.35s var(--ease); }
 .brand b { color: var(--accent); }
+/* 홈(최상단)일 때 브랜드 밑줄 드로우인 */
+.brand::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -5px; height: 2px;
+  background: currentColor; border-radius: 2px;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s var(--ease);
+}
+.brand.on::after { transform: scaleX(1); }
 .nav-links { display: flex; gap: 4px; }
 .nav-link {
   padding: 7px 14px; border-radius: 999px; font-size: 14px; font-weight: 600;

@@ -38,12 +38,15 @@ export function TopNav({ session, isStaff, q, setQ }: {
     else { navigate("/"); setTimeout(scroll, 140); }
   };
 
+  // 홈(/) 최상단이면 브랜드 밑줄, 스크롤 다운/타 페이지면 Showcase 라운드박스
+  const atTopHome = overlay && !scrolled;
+
   return (
     <header className={"topnav" + (overlay ? " fixed" + (scrolled ? "" : " dark") : "")}>
       <div className="container topnav-in">
-        <NavLink to="/" className="brand" onClick={goTop}>madup<b>.</b>creative-portal</NavLink>
+        <NavLink to="/" className={"brand" + (atTopHome ? " on" : "")} onClick={goTop}>madup<b>.</b>creative-portal</NavLink>
         <nav className="nav-links">
-          <NavLink to="/" end onClick={goWork} className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Showcase</NavLink>
+          <NavLink to="/" end onClick={goWork} className={({ isActive }) => "nav-link" + ((overlay ? scrolled : isActive) ? " active" : "")}>Showcase</NavLink>
           <NavLink to="/explore" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Explore</NavLink>
           <NavLink to="/directory" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Directory</NavLink>
         </nav>
