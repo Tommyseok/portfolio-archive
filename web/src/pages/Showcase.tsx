@@ -11,26 +11,29 @@ import devSample from "../lib/devSample.json"; // TEMP-DEV
 /** 히어로 캐러셀 슬라이드 — 통일된 타이포·레이아웃, 이미지만 교체 */
 const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; ko: ReactNode; ai?: boolean }[] = [
   {
-    img: "/hero-ai.jpg", // 힉스필드 아웃페인트 — 좌측 초록 자연 확장, 모델 우측
-    objPos: "60% 46%",
-    kicker: "Creative Excellence",
-    head: <>Emotional creative<br /><i>from data</i></>,
-    ko: <>소비자 마음을 움직이는 크리에이티브,<br />데이터로 설계 합니다.</>,
-    ai: true,
-  },
-  {
-    img: "/hero-night2.jpg", // 야간 편집 — 좌측 모니터가 보이도록 패닝
+    // ① 압도적 데이터량 — 편집 모니터
+    img: "/hero-night2.jpg",
     objPos: "20% 50%",
-    kicker: "Data-driven creative",
-    head: <>Creative <i>with data</i></>,
-    ko: <>사람의 마음과 행동은 숫자로 남습니다.<br />매드업의 크리에이티브는 그 숫자 위에서 시작됩니다.</>,
+    kicker: "Data advantage",
+    head: <>More data, <i>sharper creative</i></>,
+    ko: <>누구보다 많은 데이터가,<br />크리에이티브의 정확도를 만듭니다.</>,
   },
   {
-    img: "/hero-craft2.jpg", // 촬영 현장 BTS (모니터) — 다크 디밍
+    // ② 데이터 기반 제작 — 촬영 BTS
+    img: "/hero-craft2.jpg",
     objPos: "50% 50%",
-    kicker: "Production craft",
-    head: <>More data, <i>better creative</i></>,
-    ko: <>누구보다 많은 데이터를 가졌기에,<br />가장 좋은 크리에이티브를 만들 수 있습니다.</>,
+    kicker: "Data-driven",
+    head: <>Creative, <i>by design</i></>,
+    ko: <>감으로 만들지 않습니다.<br />데이터로 설계하는 크리에이티브.</>,
+  },
+  {
+    // ③ AI로 감정 표현 — AI 키위 모델
+    img: "/hero-ai.jpg",
+    objPos: "60% 46%",
+    kicker: "AI Creative",
+    head: <>Even emotion, <i>made by AI</i></>,
+    ko: <>AI로, 감정까지 표현하는<br />매드업의 크리에이티브.</>,
+    ai: true,
   },
 ];
 
