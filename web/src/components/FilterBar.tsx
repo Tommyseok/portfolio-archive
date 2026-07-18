@@ -64,12 +64,13 @@ function Pill({ label, opts, selected, onToggle, grouped }: {
   );
 }
 
-export function FilterBar({ items, filters, setFilters, resultCount, title }: {
+export function FilterBar({ items, filters, setFilters, resultCount, title, hideTeamBidding }: {
   items: Item[];
   filters: Filters;
   setFilters: (f: Filters) => void;
   resultCount: number;
   title: string;
+  hideTeamBidding?: boolean; // Showcase 외부 노출 시 제작팀·비딩 숨김
 }) {
   const toggle = (key: keyof Filters) => (v: string) => {
     const cur = filters[key] as string[];
@@ -131,12 +132,16 @@ export function FilterBar({ items, filters, setFilters, resultCount, title }: {
           <Pill label="태그" opts={optTags} selected={filters.tags} onToggle={toggle("tags")} />
           <Pill label="광고주" opts={optClient} selected={filters.client} onToggle={toggle("client")} />
           <Pill label="제작방식" opts={optMethod} selected={filters.production_method} onToggle={toggle("production_method")} />
-          <Pill label="제작팀" opts={optTeam} selected={filters.production_team} onToggle={toggle("production_team")} />
-          <button
-            className={"fpill" + (filters.bidding === true ? " on" : "")}
-            onClick={() => setFilters({ ...filters, bidding: filters.bidding === true ? null : true })}>
-            비딩
-          </button>
+          {!hideTeamBidding && (
+            <>
+              <Pill label="제작팀" opts={optTeam} selected={filters.production_team} onToggle={toggle("production_team")} />
+              <button
+                className={"fpill" + (filters.bidding === true ? " on" : "")}
+                onClick={() => setFilters({ ...filters, bidding: filters.bidding === true ? null : true })}>
+                비딩
+              </button>
+            </>
+          )}
           {active > 0 && (
             <button className="fpill" style={{ borderStyle: "dashed" }} onClick={() => setFilters({ ...emptyFilters, q: "" })}>
               초기화 ({active})

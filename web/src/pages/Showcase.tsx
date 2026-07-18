@@ -223,7 +223,7 @@ export function Showcase({ items, loading, filters, setFilters, staff }: {
         </div>
       ) : (
         <>
-          <FilterBar items={pool} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Selected work" />
+          <FilterBar items={pool} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Selected work" hideTeamBidding />
           <WorkGrid items={filtered} onOpen={setOpen} loading={loading} />
         </>
       )}
