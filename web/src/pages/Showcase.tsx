@@ -19,14 +19,14 @@ const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; k
     ai: true,
   },
   {
-    img: "/hero-night2.jpg", // 야간 편집 클로즈업
-    objPos: "100% 50%",
+    img: "/hero-night2.jpg", // 야간 편집 — 좌측 모니터가 보이도록 패닝
+    objPos: "20% 50%",
     kicker: "Data-driven creative",
     head: <>Creative <i>with data</i></>,
     ko: <>사람의 마음과 행동은 숫자로 남습니다.<br />매드업의 크리에이티브는 그 숫자 위에서 시작됩니다.</>,
   },
   {
-    img: "/hero-craft.jpg", // 촬영 현장 실루엣
+    img: "/hero-craft2.jpg", // 촬영 현장 BTS (모니터) — 다크 디밍
     objPos: "50% 50%",
     kicker: "Production craft",
     head: <>More data, <i>better creative</i></>,
