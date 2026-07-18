@@ -384,6 +384,34 @@ img { max-width: 100%; }
    Showcase v2 — 풀블리드 쇼릴 · 스테이트먼트 · 대형 워크 그리드
    ══════════════════════════════════════════════════════════════ */
 
+/* ── 중간 카피 (쇼릴 ↔ 그리드) ── */
+.midstate {
+  max-width: 1000px; margin: 0 auto;
+  padding: clamp(70px, 11vw, 140px) 28px clamp(46px, 7vw, 90px);
+  text-align: center;
+}
+.midstate-kicker {
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+  display: inline-flex; align-items: center; gap: 12px;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.midstate-kicker::before, .midstate-kicker::after {
+  content: ""; width: 26px; height: 1px; background: var(--accent); opacity: 0.5;
+}
+.midstate-body {
+  margin: clamp(22px, 3vw, 34px) 0 0;
+  font-size: clamp(24px, 3.4vw, 46px);
+  font-weight: 650; letter-spacing: -0.03em; line-height: 1.32;
+  text-wrap: balance;
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.9s var(--ease) 0.12s, transform 0.9s var(--ease) 0.12s;
+}
+.midstate-body em { font-style: normal; color: var(--accent); }
+.midstate.in .midstate-kicker,
+.midstate.in .midstate-body { opacity: 1; transform: none; }
+
 /* ── 히어로 패널 3장 — Superside 스타일 (이미지 + 라이브 타이포) ── */
 .hpanel {
   position: relative; overflow: hidden;
@@ -460,7 +488,7 @@ img { max-width: 100%; }
 /* Made with AI — 모델 얼굴 옆, 확대 + 마크(+/×) 회전→직선 전환 + 깜빡이는 점 */
 .hp-ai {
   position: absolute; z-index: 3;
-  right: clamp(20px, 6vw, 120px); top: 60%;
+  right: clamp(16px, 11vw, 230px); top: 62%;
   display: flex; align-items: center; gap: 14px;
   font-size: clamp(18px, 1.7vw, 25px); font-weight: 600;
   color: #fff; letter-spacing: 0.01em;

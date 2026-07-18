@@ -13,26 +13,11 @@ const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; k
   {
     img: "/hero-ai.jpg", // 힉스필드 아웃페인트 — 좌측 초록 자연 확장, 모델 우측
     objPos: "60% 46%",
-    kicker: "Creative excellence",
+    kicker: "Creative Excellence",
     head: <><i>Emotional creative</i><br />from data</>,
-    ko: <>소비자의 마음을 움직인,<br />데이터로 만든 크리에이티브를 소개합니다.</>,
+    ko: <>소비자 마음을 움직이는 크리에이티브를,<br />데이터로 설계합니다.</>,
     en: "",
     ai: true,
-  },
-  {
-    img: "/hero-night2.jpg", // 힉스필드 생성 — 디자이너 얼굴 참조, 야간 편집 클로즈업 크롭
-    objPos: "100% 50%",
-    kicker: "Data-driven creative",
-    head: <>Creative <i>with data</i></>,
-    ko: <>사람의 마음과 행동은 숫자로 남습니다.<br />매드업의 크리에이티브는 그 숫자 위에서 시작됩니다.</>,
-    en: "Hearts and actions become numbers. We create from them.",
-  },
-  {
-    img: "/hero-craft.jpg",
-    kicker: "Production craft",
-    head: <>More data, <i>better creative</i></>,
-    ko: <>누구보다 많은 데이터를 가졌기에,<br />가장 좋은 크리에이티브를 만들 수 있습니다.</>,
-    en: "No one holds more data. That's where great creative begins.",
   },
 ];
 
@@ -128,6 +113,20 @@ function HeroReel() {
   );
 }
 
+/** 중간 카피 — 쇼릴과 그리드 사이 (Full-Stack Creative Service) */
+function MiddleStatement() {
+  const { ref, seen } = useReveal<HTMLElement>(0.3);
+  return (
+    <section ref={ref} className={"midstate" + (seen ? " in" : "")}>
+      <div className="midstate-kicker">Full-Stack Creative Service</div>
+      <p className="midstate-body">
+        실사 촬영부터 풀 AI까지, 배너부터 오프라인까지 —<br />
+        표현에 <em>한계가 없는</em> 크리에이티브를 소개합니다.
+      </p>
+    </section>
+  );
+}
+
 /** 스탯 라인 — 패널·쇼릴 아래, 그리드 위 */
 function StatsLine({ count, clients }: { count: number; clients: number }) {
   return (
@@ -162,6 +161,8 @@ export function Showcase({ items, loading, filters, setFilters, staff }: {
       {PANELS.map((p, i) => <HeroPanel key={p.img} p={p} first={i === 0} />)}
 
       <HeroReel />
+
+      <MiddleStatement />
 
       <StatsLine count={pool.length} clients={clients} />
 
