@@ -15,7 +15,7 @@ const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; k
     img: "/hero-night2.jpg",
     objPos: "20% 50%",
     kicker: "Data advantage",
-    head: <>Best creative, <i>with big data</i></>,
+    head: <>Best creative,<br /><i>with big data</i></>,
     ko: <>누구보다 많은 데이터를 가졌기에,<br />가장 좋은 크리에이티브를 만듭니다.</>,
   },
   {
@@ -23,16 +23,16 @@ const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; k
     img: "/hero-craft2.jpg",
     objPos: "50% 50%",
     kicker: "Production craft",
-    head: <>Full-stack creative, <i>end to end</i></>,
-    ko: <>수준 높은 통합 크리에이티브를 제공합니다.</>,
+    head: <>Full-stack creative,<br /><i>end to end</i></>,
+    ko: <>실 촬영, 인터렉티브 콘텐츠, IMC까지<br />수준 높은 통합 크리에이티브 서비스를 제공합니다.</>,
   },
   {
     // ③ AI로 감정·팬 — AI 키위 모델
     img: "/hero-ai.jpg",
     objPos: "60% 46%",
     kicker: "AI Excellence",
-    head: <>A new standard, <i>for AI</i></>,
-    ko: <>효율을 넘어 공감과 감정으로 팬을 만드는 것,<br />이것이 AI 크리에이티브의 새로운 기준입니다.</>,
+    head: <>A new standard,<br /><i>for AI creative</i></>,
+    ko: <>숫자와 효율을 넘어 공감과 감성으로 팬을 만드는 것,<br />매드업 AI 크리에이티브의 기준입니다.</>,
     ai: true,
   },
 ];
