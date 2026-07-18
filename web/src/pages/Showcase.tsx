@@ -11,28 +11,28 @@ import devSample from "../lib/devSample.json"; // TEMP-DEV
 /** 히어로 캐러셀 슬라이드 — 통일된 타이포·레이아웃, 이미지만 교체 */
 const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; ko: ReactNode; ai?: boolean }[] = [
   {
-    // ① 압도적 데이터량 — 편집 모니터
+    // ① 데이터 우위 — 편집 모니터
     img: "/hero-night2.jpg",
     objPos: "20% 50%",
     kicker: "Data advantage",
-    head: <>More data, <i>sharper creative</i></>,
-    ko: <>누구보다 많은 데이터가,<br />크리에이티브의 정확도를 만듭니다.</>,
+    head: <>Best creative, <i>with big data</i></>,
+    ko: <>누구보다 많은 데이터를 가졌기에,<br />가장 좋은 크리에이티브를 만듭니다.</>,
   },
   {
-    // ② 데이터 기반 제작 — 촬영 BTS
+    // ② 풀스택 통합 제작 — 촬영 BTS
     img: "/hero-craft2.jpg",
     objPos: "50% 50%",
-    kicker: "Data-driven",
-    head: <>Creative, <i>by design</i></>,
-    ko: <>감으로 만들지 않습니다.<br />데이터로 설계하는 크리에이티브.</>,
+    kicker: "Production craft",
+    head: <>Full-stack creative, <i>end to end</i></>,
+    ko: <>수준 높은 통합 크리에이티브를 제공합니다.</>,
   },
   {
-    // ③ AI로 감정 표현 — AI 키위 모델
+    // ③ AI로 감정·팬 — AI 키위 모델
     img: "/hero-ai.jpg",
     objPos: "60% 46%",
-    kicker: "AI Creative",
-    head: <>Even emotion, <i>made by AI</i></>,
-    ko: <>AI로, 감정까지 표현하는<br />매드업의 크리에이티브.</>,
+    kicker: "AI Excellence",
+    head: <>A new standard, <i>for AI</i></>,
+    ko: <>효율을 넘어 공감과 감정으로 팬을 만드는 것,<br />이것이 AI 크리에이티브의 새로운 기준입니다.</>,
     ai: true,
   },
 ];
