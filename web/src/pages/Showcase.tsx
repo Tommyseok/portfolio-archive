@@ -8,35 +8,75 @@ import { CaseView } from "../components/CaseView";
 import { useReveal } from "../lib/useReveal";
 import devSample from "../lib/devSample.json"; // TEMP-DEV
 
-/** 히어로 패널 3장 — Superside 스타일, 메시지당 이미지 하나 (원본 이미지 + 라이브 타이포) */
-const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; ko: ReactNode; en: string; ai?: boolean }[] = [
+/** 히어로 캐러셀 슬라이드 — 통일된 타이포·레이아웃, 이미지만 교체 */
+const PANELS: { img: string; objPos?: string; kicker: string; head: ReactNode; ko: ReactNode; ai?: boolean }[] = [
   {
     img: "/hero-ai.jpg", // 힉스필드 아웃페인트 — 좌측 초록 자연 확장, 모델 우측
     objPos: "60% 46%",
     kicker: "Creative Excellence",
     head: <>Emotional creative<br /><i>from data</i></>,
     ko: <>소비자 마음을 움직이는 크리에이티브,<br />데이터로 설계 합니다.</>,
-    en: "",
     ai: true,
+  },
+  {
+    img: "/hero-night2.jpg", // 야간 편집 클로즈업
+    objPos: "100% 50%",
+    kicker: "Data-driven creative",
+    head: <>Creative <i>with data</i></>,
+    ko: <>사람의 마음과 행동은 숫자로 남습니다.<br />매드업의 크리에이티브는 그 숫자 위에서 시작됩니다.</>,
+  },
+  {
+    img: "/hero-craft.jpg", // 촬영 현장 실루엣
+    objPos: "50% 50%",
+    kicker: "Production craft",
+    head: <>More data, <i>better creative</i></>,
+    ko: <>누구보다 많은 데이터를 가졌기에,<br />가장 좋은 크리에이티브를 만들 수 있습니다.</>,
   },
 ];
 
-function HeroPanel({ p, first }: { p: (typeof PANELS)[number]; first?: boolean }) {
-  const { ref, seen } = useReveal<HTMLElement>(0.25);
+const SLIDE_MS = 6500;
+
+/** 히어로 캐러셀 — 로드 시 랜덤 슬라이드부터, 크로스페이드 자동 전환 */
+function HeroCarousel() {
+  const [idx, setIdx] = useState(() => Math.floor(Math.random() * PANELS.length));
+  const [primed, setPrimed] = useState(false);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setPrimed(true)); // 첫 슬라이드 등장 애니메이션
+    const t = setInterval(() => setIdx((i) => (i + 1) % PANELS.length), SLIDE_MS);
+    return () => { cancelAnimationFrame(raf); clearInterval(t); };
+  }, []);
+
   return (
-    <section ref={ref} className={"hpanel" + (first ? " hp-first" : "") + (seen ? " in" : "")}>
-      <img className="hp-bg" src={p.img} alt="" style={p.objPos ? { objectPosition: p.objPos } : undefined} />
-      {p.ai && (
-        <span className="hp-ai">
-          <span className="hp-ai-mark" aria-hidden="true"><i className="bar bar-h" /><i className="bar bar-v" /></span>
-          <span className="hp-ai-txt">Made <i>with AI</i><b className="hp-ai-dot">.</b></span>
-        </span>
-      )}
-      <div className="hp-content">
-        <div className="hp-kicker">{p.kicker}</div>
-        <h1 className="hp-head">{p.head}</h1>
-        <p className="hp-ko">{p.ko}</p>
-        {p.en && <p className="hp-en">{p.en}</p>}
+    <section className="hpanel hp-first hcar">
+      {PANELS.map((p, i) => {
+        const on = i === idx;
+        return (
+          <div key={p.img} className={"hslide" + (on && primed ? " on" : "")} aria-hidden={!on}>
+            <img className="hp-bg" src={p.img} alt="" style={p.objPos ? { objectPosition: p.objPos } : undefined} />
+            {p.ai && (
+              <span className="hp-ai">
+                <span className="hp-ai-mark" aria-hidden="true"><i className="bar bar-h" /><i className="bar bar-v" /></span>
+                <span className="hp-ai-txt">Made <i>with AI</i><b className="hp-ai-dot">.</b></span>
+              </span>
+            )}
+            <div className="hp-content">
+              <div className="hp-kicker">{p.kicker}</div>
+              <h1 className="hp-head">{p.head}</h1>
+              <p className="hp-ko">{p.ko}</p>
+            </div>
+          </div>
+        );
+      })}
+      <div className="hcar-dots">
+        {PANELS.map((p, i) => (
+          <button
+            key={p.img}
+            className={"hcar-dot" + (i === idx ? " on" : "")}
+            onClick={() => setIdx(i)}
+            aria-label={`슬라이드 ${i + 1}`}
+          />
+        ))}
       </div>
     </section>
   );
@@ -123,11 +163,11 @@ function MiddleStatement() {
   return (
     <section ref={ref} className={"midstate" + (seen ? " in" : "")}>
       <div className="midstate-inner">
-        <span className="midstate-eyebrow">02 — Our capability</span>
-        <h2 className="midstate-title">Full-Stack<br />Creative Service<span className="midstate-dot">.</span></h2>
+        <span className="midstate-eyebrow">Our capability</span>
+        <h2 className="midstate-title">Full-Stack Creative Service<span className="midstate-dot">.</span></h2>
         <p className="midstate-body">
-          실사 촬영부터 풀 AI까지, 배너부터 오프라인까지 —<br />
-          표현에 <em>한계가 없는</em> 크리에이티브를 소개합니다.
+          실사 촬영부터 Full AI, 배너부터 IMC까지<br />
+          표현에 <em>한계가 없는</em> 매드업 크리에이티브를 소개합니다.
         </p>
       </div>
     </section>
@@ -137,7 +177,7 @@ function MiddleStatement() {
 /** 스탯 라인 — 패널·쇼릴 아래, 그리드 위 */
 function StatsLine({ count, clients }: { count: number; clients: number }) {
   return (
-    <div className="container" style={{ padding: "36px 28px 8px", fontFamily: "var(--mono)", fontSize: 12, color: "var(--ink-3)", letterSpacing: "0.05em" }}>
+    <div className="container" style={{ padding: "10px 28px 8px", fontFamily: "var(--mono)", fontSize: 12, color: "var(--ink-3)", letterSpacing: "0.05em" }}>
       {count} selected works · {clients} brands — 촬영 숏폼부터 생성형 AI 이미지·영상까지
     </div>
   );
@@ -165,7 +205,7 @@ export function Showcase({ items, loading, filters, setFilters, staff }: {
 
   return (
     <>
-      {PANELS.map((p, i) => <HeroPanel key={p.img} p={p} first={i === 0} />)}
+      <HeroCarousel />
 
       <HeroReel />
 
