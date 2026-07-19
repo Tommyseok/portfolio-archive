@@ -708,14 +708,19 @@ img { max-width: 100%; }
 .work-tile::after {
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 52%, rgba(10, 10, 12, 0.62));
+  background: linear-gradient(180deg, transparent 38%, rgba(10, 10, 12, 0.72));
   pointer-events: none;
+  opacity: 0; transition: opacity 0.4s var(--ease);
 }
+.work-tile:hover::after { opacity: 1; }
 
 .wt-label {
   position: absolute; left: 26px; right: 26px; bottom: 22px; z-index: 2;
   color: #fff;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
 }
+.work-tile:hover .wt-label { opacity: 1; transform: none; }
 .wt-name {
   display: flex; align-items: baseline; gap: 10px;
   font-family: var(--serif);
