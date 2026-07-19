@@ -1,5 +1,5 @@
 // web/src/types.ts — Supabase credential_items 행과 동일 필드
-export type SourceTeam = "PD" | "DS" | "MS";
+export type SourceTeam = "PD" | "DS" | "MS" | "MANUAL";
 export type ContentType = "촬영숏폼" | "스틸사진" | "AI영상" | "AI이미지" | "모션그래픽";
 
 export interface Item {
@@ -60,6 +60,7 @@ export interface Item {
   cover_image?: string | null;
   cover_position?: string | null;
   cover_zoom?: number | null;
+  cover_video?: string | null;
 }
 
 /** 필터에 쓰는 태그 = AI 소구포인트 + 수기 태그 합집합 */
@@ -87,4 +88,5 @@ export const SOURCE_TEAM_LABELS: Record<SourceTeam, string> = {
   PD: "촬영 (PD)",
   DS: "AI 이미지 (DS)",
   MS: "AI 영상·모션 (MS)",
+  MANUAL: "직접 등록",
 };

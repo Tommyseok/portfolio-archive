@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { Item } from "../types";
 import { MEDIA_TAXONOMY, PRODUCTION_METHODS, PRODUCTION_TEAMS, SOURCE_TEAM_LABELS, tagsOf } from "../types";
-import { saveOverlay, uploadExtraImage, fetchComments, addComment, deleteComment, featuredRankConflict, type CommentRow } from "../lib/useData";
+import { saveOverlay, uploadExtraImage, uploadCoverVideo, deleteItem, fetchComments, addComment, deleteComment, featuredRankConflict, type CommentRow } from "../lib/useData";
 import { detailTitle, detailSubtitle, detailDesc, detailGallery, detailLinks } from "../lib/detail";
 
 const nameOf = (email: string) => email.split("@")[0];
@@ -188,6 +188,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
   const [coverImg, setCoverImg] = useState("");
   const [coverPos, setCoverPos] = useState("");
   const [coverZoom, setCoverZoom] = useState(1);
+  const [coverVideo, setCoverVideo] = useState("");
   const [linkRows, setLinkRows] = useState<{ label: string; url: string }[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -212,6 +213,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
     setCoverImg(item.cover_image ?? "");
     setCoverPos(item.cover_position ?? "");
     setCoverZoom(item.cover_zoom ?? 1);
+    setCoverVideo(item.cover_video ?? "");
     setLinkRows(item.custom_links ?? []);
   }, [item]);
 
@@ -256,6 +258,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
         cover_image: coverImg || null,
         cover_position: coverPos || null,
         cover_zoom: coverZoom !== 1 ? coverZoom : null,
+        cover_video: coverVideo || null,
         custom_links: linkRows.filter((r) => r.url.trim()),
       }, email);
       onSaved();
@@ -283,6 +286,23 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
       onSaved();
     } catch (e) { setErr(String((e as Error).message)); }
     setBusy(false);
+  };
+
+  const uploadVid = async (file: File) => {
+    if (!email) return;
+    setBusy(true); setErr(null);
+    try { setCoverVideo(await uploadCoverVideo(item.id, file)); }
+    catch (e) { setErr(String((e as Error).message)); }
+    setBusy(false);
+  };
+
+  const isManual = item.id.startsWith("manual-");
+  const removeThisItem = async () => {
+    if (!email || !isManual) return;
+    if (!window.confirm(`'${item.client}' 항목을 완전히 삭제할까요? 되돌릴 수 없습니다.`)) return;
+    setBusy(true); setErr(null);
+    try { await deleteItem(item.id); onSaved(); onClose(); }
+    catch (e) { setErr(String((e as Error).message)); setBusy(false); }
   };
 
   return (
@@ -397,6 +417,22 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
             <CoverEditor images={detailGallery(item)} cover={coverImg} setCover={setCoverImg} pos={coverPos} setPos={setCoverPos} zoom={coverZoom} setZoom={setCoverZoom} />
 
             <div className="field">
+              <label>커버 동영상 (자동재생 · 선택)</label>
+              {coverVideo ? (
+                <div>
+                  <video src={coverVideo} muted loop playsInline autoPlay style={{ width: 150, aspectRatio: "4 / 3", objectFit: "cover", borderRadius: 8, background: "#000", display: "block" }} />
+                  <button className="dv-btn" type="button" style={{ marginTop: 6 }} onClick={() => setCoverVideo("")}>동영상 제거</button>
+                </div>
+              ) : (
+                <label className="dv-btn" style={{ cursor: "pointer", display: "inline-block" }}>
+                  동영상 업로드 (mp4/webm)
+                  <input type="file" accept="video/*" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) void uploadVid(f); }} />
+                </label>
+              )}
+              <span className="hint">있으면 Featured 카드가 이 영상을 음소거 자동재생하고 그 위에 카피가 표시됩니다. (짧은 루프 권장)</span>
+            </div>
+
+            <div className="field">
               <label>타이틀 (상세 뷰 · 비우면 광고주명)</label>
               <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={item.client} />
             </div>
@@ -470,6 +506,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
             <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
               <button className="dv-btn accent" onClick={() => void save()} disabled={busy}>{busy ? "저장 중…" : "저장"}</button>
               <button className="dv-btn" onClick={() => setEdit(false)} disabled={busy}>취소</button>
+              {isManual && <button className="dv-btn" style={{ marginLeft: "auto", color: "#ff6b81", borderColor: "rgba(255,107,129,.5)" }} onClick={() => void removeThisItem()} disabled={busy}>항목 삭제</button>}
             </div>
           </div>
         )}

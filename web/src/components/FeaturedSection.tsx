@@ -20,10 +20,24 @@ function imgStyle(item: Item): CSSProperties {
   return s as unknown as CSSProperties;
 }
 
+/** 커버 미디어 — cover_video 있으면 자동재생 영상, 없으면 이미지 배경 */
+function CoverMedia({ item }: { item: Item }) {
+  if (item.cover_video) {
+    const vs = { objectPosition: coverPosOf(item), transformOrigin: coverPosOf(item), "--cz": coverZoomOf(item) } as unknown as CSSProperties;
+    return (
+      <video className="img" autoPlay muted loop playsInline preload="metadata"
+        poster={coverOf(item) ?? undefined} style={vs}>
+        <source src={item.cover_video} />
+      </video>
+    );
+  }
+  return <div className="img" style={imgStyle(item)} />;
+}
+
 function Hero({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
   return (
     <div className="fh" onClick={() => onOpen(item)}>
-      <div className="img" style={imgStyle(item)} />
+      <CoverMedia item={item} />
       <div className="scrim" />
       <div className="in">
         <div className="kicker">{kickerOf(item)}</div>
@@ -37,7 +51,7 @@ function Hero({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
 function Tile({ item, cls, onOpen }: { item: Item; cls: string; onOpen: (i: Item) => void }) {
   return (
     <div className={"ft " + cls} onClick={() => onOpen(item)}>
-      <div className="img" style={imgStyle(item)} />
+      <CoverMedia item={item} />
       <div className="scrim" />
       <div className="txt">
         <h4><Emph text={headlineOf(item)} /></h4>

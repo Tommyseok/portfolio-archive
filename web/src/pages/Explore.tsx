@@ -7,7 +7,7 @@ import { FilterBar } from "../components/FilterBar";
 import { ItemGrid } from "../components/ItemGrid";
 import { DetailView } from "../components/DetailView";
 import { LoginGate } from "../components/LoginGate";
-import { useSocial, toggleLike, togglePublish } from "../lib/useData";
+import { useSocial, toggleLike, togglePublish, createItem } from "../lib/useData";
 import devSample from "../lib/devSample.json"; // TEMP-DEV
 
 export function Explore({ items, loading, filters, setFilters, staff, ready, email, onSaved }: {
@@ -23,6 +23,22 @@ export function Explore({ items, loading, filters, setFilters, staff, ready, ema
   const [open, setOpen] = useState<Item | null>(null);
   const [params, setParams] = useSearchParams();
   const { social, reloadSocial } = useSocial([email ?? "anon"]);
+  const [creating, setCreating] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [nc, setNc] = useState(""); // 새 항목 광고주명
+  const [nt, setNt] = useState(""); // 새 항목 제목
+
+  const doCreate = async () => {
+    if (!email || !nc.trim()) return;
+    setBusy(true);
+    try {
+      const it = await createItem({ client: nc, title: nt }, email);
+      setCreating(false); setNc(""); setNt("");
+      onSaved();        // 그리드 새로고침 (Explore 반영)
+      setOpen(it);      // 새 항목을 바로 편집 모달로 열기
+    } catch (e) { window.alert(String((e as Error).message)); }
+    setBusy(false);
+  };
 
   /** 좋아요 토글 — 즉시 반영 후 서버 동기화 */
   const handleLike = (it: Item) => {
@@ -68,6 +84,21 @@ export function Explore({ items, loading, filters, setFilters, staff, ready, ema
   return (
     <>
       <FilterBar items={pool} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Explore" />
+      {staff && (
+        <div className="container" style={{ padding: "8px 0 4px" }}>
+          {!creating ? (
+            <button className="btn ghost" onClick={() => setCreating(true)}>+ 새 항목 만들기</button>
+          ) : (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+              <input className="input" placeholder="광고주 / 브랜드명" value={nc} onChange={(e) => setNc(e.target.value)} style={{ maxWidth: 200 }} autoFocus />
+              <input className="input" placeholder="제목 (선택)" value={nt} onChange={(e) => setNt(e.target.value)} style={{ maxWidth: 240 }}
+                onKeyDown={(e) => { if (e.key === "Enter" && nc.trim()) void doCreate(); }} />
+              <button className="btn" onClick={() => void doCreate()} disabled={busy || !nc.trim()}>{busy ? "생성 중…" : "만들기 → 편집"}</button>
+              <button className="btn ghost" onClick={() => { setCreating(false); setNc(""); setNt(""); }}>취소</button>
+            </div>
+          )}
+        </div>
+      )}
       <ItemGrid items={filtered} onOpen={setOpen} staff={staff} loading={loading}
         email={email} social={social} onToggleLike={handleLike} onTogglePublish={handlePublish} />
       <DetailView item={open} onClose={() => setOpen(null)} staff={staff} email={email}

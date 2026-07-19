@@ -779,6 +779,8 @@ img { max-width: 100%; }
 .ft { position: relative; overflow: hidden; cursor: pointer; }
 .ft .img { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(var(--cz, 1)); transition: transform 0.8s var(--ease); }
 .ft:hover .img { transform: scale(calc(1.05 * var(--cz, 1))); }
+/* 커버 동영상 (자동재생) */
+.fh video.img, .ft video.img { object-fit: cover; }
 .ft .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,10,12,0.66) 0%, rgba(8,10,12,0.14) 44%, rgba(8,10,12,0) 72%); }
 .ft .txt { position: absolute; top: 0; left: 0; right: 0; padding: 30px; color: #fff; z-index: 2; text-align: left; }
 .ft h4 { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.28; }

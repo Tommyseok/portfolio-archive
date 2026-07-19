@@ -121,7 +121,7 @@ export async function saveOverlay(
     | "media_type" | "format" | "production_method" | "production_team"
     | "is_featured" | "featured_rank" | "featured_headline" | "featured_subcopy"
     | "featured_kicker" | "featured_cover" | "custom_title" | "custom_links"
-    | "cover_image" | "cover_position" | "cover_zoom">>,
+    | "cover_image" | "cover_position" | "cover_zoom" | "cover_video">>,
   email: string,
 ) {
   const { error } = await supabase
@@ -146,4 +146,41 @@ export async function uploadExtraImage(itemId: string, file: File): Promise<stri
   const { error } = await supabase.storage.from("credential-images").upload(path, file);
   if (error) throw new Error(error.message);
   return supabase.storage.from("credential-images").getPublicUrl(path).data.publicUrl;
+}
+
+/** 커버 동영상 업로드 → 공개 URL 반환 (자동재생용 mp4/webm) */
+export async function uploadCoverVideo(itemId: string, file: File): Promise<string> {
+  const ext = file.name.split(".").pop() ?? "mp4";
+  const path = `videos/${itemId}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from("credential-images").upload(path, file, { contentType: file.type || "video/mp4" });
+  if (error) throw new Error(error.message);
+  return supabase.storage.from("credential-images").getPublicUrl(path).data.publicUrl;
+}
+
+/** 새 항목 생성 (스태프 직접 등록) → 생성된 id 반환. Explore/Featured 공용 행. */
+export async function createItem(fields: { client: string; title?: string; overview?: string; media_type?: string | null; format?: string | null }, email: string): Promise<Item> {
+  const id = `manual-${crypto.randomUUID()}`;
+  const client = fields.client.trim();
+  const row = {
+    id, source_team: "MANUAL", source_slide_id: id,
+    client, client_raw: client, client_matched: false,
+    industry: null, category_group: null, advertiser_type: null, advertiser_status: "unmatched",
+    is_bidding: false, title: fields.title?.trim() || client, overview: fields.overview?.trim() || "",
+    year_month: null, media_type: fields.media_type ?? null, format: fields.format ?? null,
+    content_type: [], production_team: null, production_method: null, tools: [], team: null,
+    video_urls: [], asset_images: [], thumbnail: null, ai_used: false,
+    period_start: null, period_end: null, in_house: null, piece_count: null,
+    appeal_points: [], keywords: [], search_summary: "", ai_confidence: null,
+    custom_description: null, custom_tags: [], extra_images: [], creators: [],
+    showcase_approved: false, is_featured: false, updated_by: email,
+  };
+  const { error } = await supabase.from("credential_items").insert(row);
+  if (error) throw new Error(error.message);
+  return row as unknown as Item;
+}
+
+/** 수동 생성 항목 삭제 (manual-* 만, RLS 로도 강제) */
+export async function deleteItem(id: string): Promise<void> {
+  const { error } = await supabase.from("credential_items").delete().eq("id", id);
+  if (error) throw new Error(error.message);
 }
