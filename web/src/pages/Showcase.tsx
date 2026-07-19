@@ -198,13 +198,17 @@ export function Showcase({ items, loading, filters, setFilters, staff, email, on
   }, [items]);
   const filtered = useMemo(() => applyFilters(pool, filters), [pool, filters]);
 
-  // /showcase 로 진입(또는 직접 URL·뒤로가기) 시 Selected work 로 스크롤
+  // /showcase 진입(직접 URL·외부 유입·뒤로가기 포함) 시 Selected work 위치로 확실히 착지.
+  // 히어로·Featured 이미지가 비동기 로드되며 높이가 바뀌므로, 즉시 이동 + 여러 시점 재시도.
   const { pathname } = useLocation();
   useEffect(() => {
     if (pathname !== "/showcase") return;
-    const t = setTimeout(() => document.getElementById("showcase-work")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
-    return () => clearTimeout(t);
-  }, [pathname]);
+    const jump = () => document.getElementById("showcase-work")?.scrollIntoView({ behavior: "auto", block: "start" });
+    jump();
+    const ts = [50, 200, 500, 1000, 1800].map((d) => setTimeout(jump, d));
+    window.addEventListener("load", jump);
+    return () => { ts.forEach(clearTimeout); window.removeEventListener("load", jump); };
+  }, [pathname, loading, filtered.length]);
 
   return (
     <>
