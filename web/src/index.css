@@ -148,7 +148,7 @@ img { max-width: 100%; }
 /* 결과 카운트 라인 */
 /* 좌우 여백은 .container(clamp) 상속 — "Selected work"를 단일 기준선에 정렬 */
 .count-line { display: flex; align-items: center; gap: 10px; padding-top: 14px; padding-bottom: 4px; flex-wrap: wrap; }
-.count-line .k { font-weight: 800; font-size: 15px; letter-spacing: -0.02em; }
+.count-line .k { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; font-family: var(--sans); }
 .count-line .v {
   font-family: var(--mono); font-size: 12px; font-weight: 600;
   padding: 2px 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface);
@@ -371,7 +371,7 @@ img { max-width: 100%; }
   font-size: clamp(17px, 1.7vw, 24px);
   font-weight: 500; line-height: 1.62; color: var(--ink-2);
 }
-.midstate-body em { font-family: var(--serif); font-style: italic; font-weight: 400; color: inherit; }
+.midstate-body em { font-family: inherit; font-style: normal; font-weight: inherit; color: inherit; }
 /* 순차 리빌 */
 .midstate-eyebrow, .midstate-title, .midstate-body {
   opacity: 0; transform: translateY(20px);
@@ -760,7 +760,7 @@ img { max-width: 100%; }
 /* ══════════ Featured Case Studies 섹션 ══════════ */
 .featured { margin: 8px auto 30px; }
 .featured-eyebrow { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
-.featured-eyebrow .t { font-family: var(--serif); font-size: 22px; letter-spacing: -0.01em; white-space: nowrap; }
+.featured-eyebrow .t { font-family: var(--sans); font-size: 18px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; }
 .featured-eyebrow .rule { flex: 1; height: 1px; background: var(--ink); opacity: 0.28; }
 
 /* 히어로 — 풀 이미지 + 좌하단 오버레이 */
