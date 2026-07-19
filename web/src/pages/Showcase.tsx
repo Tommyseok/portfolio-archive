@@ -4,7 +4,8 @@ import type { Filters } from "../lib/filter";
 import { applyFilters } from "../lib/filter";
 import { FilterBar } from "../components/FilterBar";
 import { WorkGrid } from "../components/WorkGrid";
-import { CaseView } from "../components/CaseView";
+import { DetailView } from "../components/DetailView";
+import { FeaturedSection } from "../components/FeaturedSection";
 import { useReveal } from "../lib/useReveal";
 import devSample from "../lib/devSample.json"; // TEMP-DEV
 
@@ -177,7 +178,7 @@ function MiddleStatement() {
   );
 }
 
-export function Showcase({ items, loading, filters, setFilters, staff }: {
+export function Showcase({ items, loading, filters, setFilters, staff, email, onSaved }: {
   items: Item[];
   loading: boolean;
   filters: Filters;
@@ -204,6 +205,8 @@ export function Showcase({ items, loading, filters, setFilters, staff }: {
 
       <MiddleStatement />
 
+      <FeaturedSection items={pool} onOpen={setOpen} />
+
       {!loading && pool.length === 0 ? (
         <div className="container empty">
           <div className="big">Coming soon</div>
@@ -215,7 +218,8 @@ export function Showcase({ items, loading, filters, setFilters, staff }: {
           <WorkGrid items={filtered} onOpen={setOpen} loading={loading} />
         </>
       )}
-      <CaseView item={open} onClose={() => setOpen(null)} />
+      <DetailView item={open} onClose={() => setOpen(null)} staff={staff} email={email}
+        onSaved={() => { onSaved(); setOpen(null); }} />
     </>
   );
 }
