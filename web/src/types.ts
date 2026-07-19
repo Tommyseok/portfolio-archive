@@ -46,6 +46,16 @@ export interface Item {
   creators: string[];
   showcase_approved: boolean;
   updated_by: string | null;
+  // Featured Case Studies (2026-07-19)
+  is_featured?: boolean;
+  featured_rank?: number | null;
+  featured_headline?: string | null;
+  featured_subcopy?: string | null;
+  featured_kicker?: string | null;
+  featured_cover?: string | null;
+  // 상세 뷰 오버라이드
+  custom_title?: string | null;
+  custom_links?: { label: string; url: string }[] | null;
 }
 
 /** 필터에 쓰는 태그 = AI 소구포인트 + 수기 태그 합집합 */
