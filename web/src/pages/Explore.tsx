@@ -5,7 +5,7 @@ import type { Filters } from "../lib/filter";
 import { applyFilters } from "../lib/filter";
 import { FilterBar } from "../components/FilterBar";
 import { ItemGrid } from "../components/ItemGrid";
-import { ItemModal } from "../components/ItemModal";
+import { DetailView } from "../components/DetailView";
 import { LoginGate } from "../components/LoginGate";
 import { useSocial, toggleLike, togglePublish } from "../lib/useData";
 import devSample from "../lib/devSample.json"; // TEMP-DEV
@@ -70,7 +70,7 @@ export function Explore({ items, loading, filters, setFilters, staff, ready, ema
       <FilterBar items={pool} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Explore" />
       <ItemGrid items={filtered} onOpen={setOpen} staff={staff} loading={loading}
         email={email} social={social} onToggleLike={handleLike} onTogglePublish={handlePublish} />
-      <ItemModal item={open} onClose={() => setOpen(null)} staff={staff} email={email}
+      <DetailView item={open} onClose={() => setOpen(null)} staff={staff} email={email}
         onSaved={() => { onSaved(); setOpen(null); }}
         likers={open ? social.likes[open.id] ?? [] : []}
         onToggleLike={handleLike}
