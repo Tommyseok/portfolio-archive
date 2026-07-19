@@ -1,4 +1,4 @@
-import { useEffect, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { Item } from "../types";
 import { MEDIA_TAXONOMY, PRODUCTION_METHODS, PRODUCTION_TEAMS, SOURCE_TEAM_LABELS, tagsOf } from "../types";
 import { saveOverlay, uploadExtraImage, fetchComments, addComment, deleteComment, featuredRankConflict, type CommentRow } from "../lib/useData";
@@ -87,18 +87,34 @@ function CoverEditor({ images, cover, setCover, pos, setPos, zoom, setZoom }: {
   images: string[]; cover: string; setCover: (s: string) => void; pos: string; setPos: (s: string) => void;
   zoom: number; setZoom: (n: number) => void;
 }) {
+  const TILE_AR = 4 / 3; // Selected work 타일 비율 기준
   const chosen = cover || images[0] || "";
   const [x, y] = parseXY(pos);
+  const [ar, setAr] = useState(1);
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  // 크롭 프레임 크기(전체 이미지 대비 비율) = cover 크롭 + 확대(zoom)
+  const fw = Math.min(1, ar >= TILE_AR ? (TILE_AR / ar) / zoom : 1 / zoom);
+  const fh = Math.min(1, ar >= TILE_AR ? 1 / zoom : (ar / TILE_AR) / zoom);
+  const left = (x / 100) * (1 - fw);
+  const top = (y / 100) * (1 - fh);
+  const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+
   const onMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (e.buttons !== 1) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    const nx = Math.round(Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100)));
-    const ny = Math.round(Math.min(100, Math.max(0, ((e.clientY - r.top) / r.height) * 100)));
-    setPos(`${nx}% ${ny}%`);
+    if (e.buttons !== 1 || !boxRef.current) return;
+    const r = boxRef.current.getBoundingClientRect();
+    const cf = clamp01((e.clientX - r.left) / r.width);
+    const cvf = clamp01((e.clientY - r.top) / r.height);
+    const nx = 1 - fw > 0.001 ? clamp01((cf - fw / 2) / (1 - fw)) * 100 : 50;
+    const ny = 1 - fh > 0.001 ? clamp01((cvf - fh / 2) / (1 - fh)) * 100 : 50;
+    setPos(`${Math.round(nx)}% ${Math.round(ny)}%`);
   };
+
+  const boxW = Math.min(300, Math.round(240 * ar));
+
   return (
     <div className="field">
-      <label>커버 이미지 · 보일 위치</label>
+      <label>커버 이미지 · 보일 영역 (타일 4:3)</label>
       {images.length > 1 && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 6, marginBottom: 10 }}>
           {images.map((src) => (
@@ -112,20 +128,31 @@ function CoverEditor({ images, cover, setCover, pos, setPos, zoom, setZoom }: {
       )}
       {chosen ? (
         <>
-          <div onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); onMove(e); }} onPointerMove={onMove}
-            style={{ position: "relative", width: 150, height: 200, borderRadius: 8, overflow: "hidden", cursor: "crosshair", userSelect: "none", touchAction: "none" }}>
-            <img src={chosen} alt="" draggable={false}
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: `${x}% ${y}%`, transform: `scale(${zoom})`, transformOrigin: `${x}% ${y}%`, pointerEvents: "none" }} />
-            <span style={{ position: "absolute", left: `${x}%`, top: `${y}%`, transform: "translate(-50%,-50%)", width: 18, height: 18, borderRadius: "50%", border: "2px solid #fff", boxShadow: "0 0 0 2px rgba(0,0,0,.55)", pointerEvents: "none" }} />
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
+            <div>
+              <div ref={boxRef} onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); onMove(e); }} onPointerMove={onMove}
+                style={{ position: "relative", width: boxW, aspectRatio: String(ar), background: "#000", borderRadius: 8, overflow: "hidden", cursor: "move", userSelect: "none", touchAction: "none" }}>
+                <img src={chosen} alt="" draggable={false}
+                  onLoad={(e) => { const t = e.currentTarget; if (t.naturalWidth && t.naturalHeight) setAr(t.naturalWidth / t.naturalHeight); }}
+                  style={{ width: "100%", height: "100%", objectFit: "fill", display: "block", pointerEvents: "none" }} />
+                <div style={{ position: "absolute", left: `${left * 100}%`, top: `${top * 100}%`, width: `${fw * 100}%`, height: `${fh * 100}%`, boxSizing: "border-box", border: "2px solid #fff", boxShadow: "0 0 0 9999px rgba(0,0,0,.6)", pointerEvents: "none" }} />
+              </div>
+              <span className="hint">밝은 프레임 = 타일에 실제로 보이는 영역. 드래그로 이동 · 슬라이더로 확대해 글자를 프레임 밖으로.</span>
+            </div>
+            <div>
+              <div style={{ width: 150, aspectRatio: "4 / 3", borderRadius: 8, overflow: "hidden", background: "#000" }}>
+                <img src={chosen} alt="" draggable={false}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: `${x}% ${y}%`, transform: `scale(${zoom})`, transformOrigin: `${x}% ${y}%` }} />
+              </div>
+              <span className="hint" style={{ display: "block", textAlign: "center" }}>실제 타일 결과</span>
+            </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8, maxWidth: 260 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10, maxWidth: 300 }}>
             <span style={{ fontSize: 12, color: "#b6b7bb" }}>확대</span>
-            <input type="range" min={1} max={3} step={0.05} value={zoom} style={{ flex: 1 }}
-              onChange={(e) => setZoom(Number(e.target.value))} />
+            <input type="range" min={1} max={3} step={0.05} value={zoom} style={{ flex: 1 }} onChange={(e) => setZoom(Number(e.target.value))} />
             <span style={{ fontSize: 12, fontFamily: "var(--mono)", minWidth: 34 }}>{zoom.toFixed(2)}×</span>
           </div>
-          <span className="hint">점을 드래그해 위치, 슬라이더로 확대 — 글자가 프레임 밖으로 나가게 맞추세요.</span>
-          {(cover || pos || zoom !== 1) && <button className="dv-btn" type="button" style={{ marginTop: 6 }} onClick={() => { setCover(""); setPos(""); setZoom(1); }}>커버 해제 (기본값)</button>}
+          {(cover || pos || zoom !== 1) && <button className="dv-btn" type="button" style={{ marginTop: 8 }} onClick={() => { setCover(""); setPos(""); setZoom(1); }}>커버 해제 (기본값)</button>}
         </>
       ) : <span className="hint">이미지가 없어 커버를 설정할 수 없습니다.</span>}
     </div>
