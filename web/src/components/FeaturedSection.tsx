@@ -57,7 +57,7 @@ function Tile({ item, cls, onOpen }: { item: Item; cls: string; onOpen: (i: Item
         <h4><Emph text={headlineOf(item)} /></h4>
         {subcopyOf(item) && <p>{subcopyOf(item)}</p>}
       </div>
-      <div className="ft-adv">{kickerOf(item)}</div>
+      <div className="ft-adv">{item.client}<span className="plus">+</span></div>
     </div>
   );
 }
