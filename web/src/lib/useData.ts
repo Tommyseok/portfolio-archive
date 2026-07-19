@@ -139,19 +139,22 @@ export async function featuredRankConflict(rank: number, exceptId: string): Prom
   return (data?.length ?? 0) > 0;
 }
 
+// Supabase 스토리지 키는 ASCII 안전 문자만 허용 — 한글 등은 치환 (id에 한글 포함되는 덱 항목 대응)
+const safeSeg = (s: string) => s.replace(/[^a-zA-Z0-9._-]/g, "_").replace(/_+/g, "_");
+
 /** 추가 이미지 업로드 → 공개 URL 반환 */
 export async function uploadExtraImage(itemId: string, file: File): Promise<string> {
   const ext = file.name.split(".").pop() ?? "png";
-  const path = `${itemId}/${Date.now()}.${ext}`;
+  const path = `${safeSeg(itemId)}/${Date.now()}.${ext}`;
   const { error } = await supabase.storage.from("credential-images").upload(path, file);
   if (error) throw new Error(error.message);
   return supabase.storage.from("credential-images").getPublicUrl(path).data.publicUrl;
 }
 
-/** 커버 동영상 업로드 → 공개 URL 반환 (자동재생용 mp4/webm) */
+/** 커버/상세 동영상 업로드 → 공개 URL 반환 (재생용 mp4/webm) */
 export async function uploadCoverVideo(itemId: string, file: File): Promise<string> {
   const ext = file.name.split(".").pop() ?? "mp4";
-  const path = `videos/${itemId}/${Date.now()}.${ext}`;
+  const path = `videos/${safeSeg(itemId)}/${Date.now()}.${ext}`;
   const { error } = await supabase.storage.from("credential-images").upload(path, file, { contentType: file.type || "video/mp4" });
   if (error) throw new Error(error.message);
   return supabase.storage.from("credential-images").getPublicUrl(path).data.publicUrl;
