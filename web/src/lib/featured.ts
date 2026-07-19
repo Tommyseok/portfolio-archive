@@ -32,6 +32,6 @@ export const headlineOf = (i: Item): string =>
 /** 보조 카피 / 히어로 리드 */
 export const subcopyOf = (i: Item): string => i.featured_subcopy || "";
 
-/** 히어로 키커 */
+/** 히어로 키커(아이브로우) — 기본은 광고주명만 */
 export const kickerOf = (i: Item): string =>
-  i.featured_kicker || `Featured Case Study · ${i.client}`;
+  i.featured_kicker || i.client;
