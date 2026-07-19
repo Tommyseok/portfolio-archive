@@ -12,8 +12,8 @@ export function TopNav({ session, isStaff, isAdmin, q, setQ }: {
 }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  // Showcase(/)에서는 히어로 패널 위에 투명 오버레이로 떠 있다가, 스크롤하면 라이트 바로 전환
-  const overlay = pathname === "/";
+  // Showcase(/ · /showcase)에서는 히어로 패널 위에 투명 오버레이로 떠 있다가, 스크롤하면 라이트 바로 전환
+  const overlay = pathname === "/" || pathname === "/showcase";
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -24,19 +24,17 @@ export function TopNav({ session, isStaff, isAdmin, q, setQ }: {
     return () => window.removeEventListener("scroll", onScroll);
   }, [overlay]);
 
-  // 브랜드 → 맨 위(캐러셀)로
+  // 브랜드(메인) → URL "/" + 최상단(캐러셀)으로
   const goTop = (e: React.MouseEvent) => {
-    if (pathname === "/") {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    e.preventDefault();
+    navigate("/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  // Showcase → 쇼케이스 콘텐츠 섹션(중간 카피·그리드)으로
+  // Showcase → URL "/showcase" + Selected work 그리드로
   const goWork = (e: React.MouseEvent) => {
     e.preventDefault();
-    const scroll = () => document.getElementById("showcase-work")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    if (pathname === "/") scroll();
-    else { navigate("/"); setTimeout(scroll, 140); }
+    navigate("/showcase");
+    setTimeout(() => document.getElementById("showcase-work")?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
   };
 
   // 홈(/) 최상단이면 브랜드 밑줄, 스크롤 다운/타 페이지면 Showcase 라운드박스
@@ -47,7 +45,7 @@ export function TopNav({ session, isStaff, isAdmin, q, setQ }: {
       <div className="container topnav-in">
         <NavLink to="/" className={"brand" + (atTopHome ? " on" : "")} onClick={goTop}>madup<b>.</b>creative-portal</NavLink>
         <nav className="nav-links">
-          <NavLink to="/" end onClick={goWork} className={({ isActive }) => "nav-link" + ((overlay ? scrolled : isActive) ? " active" : "")}>Showcase</NavLink>
+          <NavLink to="/showcase" onClick={goWork} className={({ isActive }) => "nav-link" + ((overlay ? scrolled : isActive) ? " active" : "")}>Showcase</NavLink>
           <NavLink to="/explore" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Explore</NavLink>
           <NavLink to="/directory" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Directory</NavLink>
           {isAdmin && <NavLink to="/admin" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Admin</NavLink>}

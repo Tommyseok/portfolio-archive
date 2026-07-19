@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import type { Item } from "../types";
 import type { Filters } from "../lib/filter";
 import { applyFilters } from "../lib/filter";
@@ -196,6 +197,14 @@ export function Showcase({ items, loading, filters, setFilters, staff, email, on
     return p;
   }, [items]);
   const filtered = useMemo(() => applyFilters(pool, filters), [pool, filters]);
+
+  // /showcase 로 진입(또는 직접 URL·뒤로가기) 시 Selected work 로 스크롤
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (pathname !== "/showcase") return;
+    const t = setTimeout(() => document.getElementById("showcase-work")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+    return () => clearTimeout(t);
+  }, [pathname]);
 
   return (
     <>

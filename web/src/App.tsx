@@ -34,6 +34,10 @@ export default function App() {
           <Showcase items={items} loading={loading} filters={filters} setFilters={setFilters}
             staff={isStaff} email={email} onSaved={() => void reload()} />
         } />
+        <Route path="/showcase" element={
+          <Showcase items={items} loading={loading} filters={filters} setFilters={setFilters}
+            staff={isStaff} email={email} onSaved={() => void reload()} />
+        } />
         <Route path="/explore" element={
           <Explore items={items} loading={loading} filters={filters} setFilters={setFilters}
             staff={isStaff} ready={ready} email={email} onSaved={() => void reload()} />
