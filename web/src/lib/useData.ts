@@ -130,6 +130,14 @@ export async function saveOverlay(
   if (error) throw new Error(error.message);
 }
 
+/** Featured 순서 중복 검사 — 같은 rank 를 쓰는 다른 featured 항목이 있으면 true */
+export async function featuredRankConflict(rank: number, exceptId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from("credential_items").select("id")
+    .eq("is_featured", true).eq("featured_rank", rank).neq("id", exceptId).limit(1);
+  return (data?.length ?? 0) > 0;
+}
+
 /** 추가 이미지 업로드 → 공개 URL 반환 */
 export async function uploadExtraImage(itemId: string, file: File): Promise<string> {
   const ext = file.name.split(".").pop() ?? "png";

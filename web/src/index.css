@@ -254,64 +254,10 @@ img { max-width: 100%; }
 .hstat .lbl { font-size: 12px; color: var(--ink-3); }
 
 /* ── 모달 ── */
-.modal-back {
-  position: fixed; inset: 0; z-index: 60; background: rgba(16, 16, 20, 0.45);
-  backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center; padding: 22px;
-  animation: fade-in 0.25s var(--ease);
-}
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-.modal {
-  background: var(--surface); border-radius: var(--radius-lg);
-  max-width: 640px; width: 100%; max-height: 92vh; overflow-y: auto;
-  box-shadow: 0 40px 80px -20px rgba(16, 16, 20, 0.35);
-  animation: modal-in 0.3s var(--ease);
-}
 @keyframes modal-in { from { opacity: 0; transform: translateY(14px) scale(0.985); } to { opacity: 1; transform: none; } }
-.modal-body { padding: 26px; }
-.modal h2 { margin: 0; font-size: 21px; letter-spacing: -0.03em; }
 .label-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .label-key { font-size: 11.5px; color: var(--ink-3); width: 70px; flex-shrink: 0; }
-
-/* ── 크리에이티브 캐러셀 ── */
-.carousel { position: relative; background: #17171b; }
-.carousel-track {
-  display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-}
-.carousel-track::-webkit-scrollbar { display: none; }
-.carousel-slide {
-  flex: 0 0 100%; scroll-snap-align: center;
-  display: flex; align-items: center; justify-content: center;
-  height: 360px;
-}
-@media (max-width: 680px) { .carousel-slide { height: 260px; } }
-.carousel-slide img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.carousel-nav {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 36px; height: 36px; border-radius: 50%; border: 0;
-  background: rgba(255, 255, 255, 0.92); color: var(--ink);
-  font-size: 20px; line-height: 1; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  transition: all 0.2s var(--ease);
-}
-.carousel-nav:hover { transform: translateY(-50%) scale(1.06); }
-.carousel-nav:disabled { opacity: 0.25; cursor: default; }
-.carousel-nav.prev { left: 12px; }
-.carousel-nav.next { right: 12px; }
-.carousel-count {
-  position: absolute; right: 12px; bottom: 10px;
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  color: #fff; background: rgba(16, 16, 20, 0.6); backdrop-filter: blur(4px);
-  padding: 2px 9px; border-radius: 999px;
-}
-.carousel-src {
-  position: absolute; left: 12px; bottom: 10px;
-  font-size: 11px; font-weight: 600; color: rgba(255, 255, 255, 0.85);
-  background: rgba(16, 16, 20, 0.6); backdrop-filter: blur(4px);
-  padding: 2px 9px; border-radius: 999px;
-}
 
 /* ── 버튼·입력 ── */
 .btn {
@@ -805,83 +751,6 @@ img { max-width: 100%; }
   background: linear-gradient(100deg, #eceef1 40%, #f5f6f8 50%, #eceef1 60%);
   background-size: 200% 100%; animation: shimmer 1.4s infinite;
 }
-
-/* ── 케이스 뷰 (풀스크린 상세) ── */
-.case-view {
-  position: fixed; inset: 0; z-index: 70;
-  background: #101014; color: #fff;
-  overflow-y: auto; overscroll-behavior: contain;
-  animation: fade-in 0.3s var(--ease);
-}
-.case-top {
-  position: sticky; top: 0; z-index: 5;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 26px;
-  background: linear-gradient(180deg, rgba(16, 16, 20, 0.85), transparent);
-}
-.case-brand {
-  font-family: var(--mono); font-size: 11.5px; font-weight: 600;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
-}
-.case-close {
-  width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px);
-  color: #fff; font-size: 17px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.25s var(--ease);
-}
-.case-close:hover { background: #fff; color: var(--ink); transform: rotate(90deg); }
-
-.case-gallery {
-  columns: 3; column-gap: 12px;
-  padding: 6px 26px 10px;
-  margin-top: -60px;
-}
-@media (max-width: 1100px) { .case-gallery { columns: 2; } }
-@media (max-width: 640px) { .case-gallery { columns: 1; padding: 6px 16px 10px; } }
-.case-gallery img {
-  width: 100%; display: block;
-  border-radius: 8px; margin-bottom: 12px;
-  break-inside: avoid;
-  background: #1c1c21;
-  animation: case-img-in 0.8s var(--ease) backwards;
-}
-.case-gallery img:nth-child(1) { animation-delay: 0.05s; }
-.case-gallery img:nth-child(2) { animation-delay: 0.12s; }
-.case-gallery img:nth-child(3) { animation-delay: 0.19s; }
-.case-gallery img:nth-child(4) { animation-delay: 0.26s; }
-@keyframes case-img-in { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-
-.case-info {
-  display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px;
-  align-items: end;
-  padding: 44px 26px 70px;
-}
-@media (max-width: 900px) { .case-info { grid-template-columns: 1fr; align-items: start; gap: 24px; padding: 34px 16px 60px; } }
-.case-title {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: clamp(40px, 5.5vw, 82px);
-  font-weight: 400; letter-spacing: 0; line-height: 1.0;
-}
-.case-kicker {
-  margin-top: 14px;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-}
-.case-desc {
-  font-size: 15px; line-height: 1.75; color: rgba(255, 255, 255, 0.82);
-  max-width: 58ch; margin: 0;
-}
-.case-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 20px; }
-.case-meta .badge {
-  background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.16);
-  color: rgba(255, 255, 255, 0.85);
-}
-.case-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
-.case-actions .btn { background: #fff; color: var(--ink); border-color: #fff; }
-.case-actions .btn:hover { opacity: 0.85; }
 
 /* ══════════ Featured Case Studies 섹션 ══════════ */
 .featured { margin: 8px 0 30px; }

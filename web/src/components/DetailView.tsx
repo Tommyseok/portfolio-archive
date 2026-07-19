@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Item } from "../types";
 import { MEDIA_TAXONOMY, PRODUCTION_METHODS, PRODUCTION_TEAMS, SOURCE_TEAM_LABELS, tagsOf } from "../types";
-import { saveOverlay, uploadExtraImage, fetchComments, addComment, deleteComment, type CommentRow } from "../lib/useData";
+import { saveOverlay, uploadExtraImage, fetchComments, addComment, deleteComment, featuredRankConflict, type CommentRow } from "../lib/useData";
 import { detailTitle, detailSubtitle, detailDesc, detailGallery, detailLinks } from "../lib/detail";
 
 const nameOf = (email: string) => email.split("@")[0];
@@ -104,6 +104,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
   const [subcopy, setSubcopy] = useState("");
   const [kicker, setKicker] = useState("");
   const [cover, setCover] = useState("");
+  const [linkRows, setLinkRows] = useState<{ label: string; url: string }[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -125,6 +126,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
     setSubcopy(item.featured_subcopy ?? "");
     setKicker(item.featured_kicker ?? "");
     setCover(item.featured_cover ?? "");
+    setLinkRows(item.custom_links ?? []);
   }, [item]);
 
   useEffect(() => {
@@ -145,6 +147,11 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
     if (!email) return;
     setBusy(true); setErr(null);
     try {
+      if (feat && rank && (await featuredRankConflict(Number(rank), item.id))) {
+        if (!window.confirm(`${rank}번 순서는 이미 다른 Featured 케이스가 사용 중입니다. 그대로 저장하면 순서가 겹칩니다. 계속할까요?`)) {
+          setBusy(false); return;
+        }
+      }
       await saveOverlay(item.id, {
         custom_description: desc || null,
         custom_title: title || null,
@@ -161,6 +168,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
         featured_subcopy: subcopy || null,
         featured_kicker: kicker || null,
         featured_cover: cover || null,
+        custom_links: linkRows.filter((r) => r.url.trim()),
       }, email);
       onSaved();
       setEdit(false);
@@ -174,6 +182,16 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
     try {
       const url = await uploadExtraImage(item.id, file);
       await saveOverlay(item.id, { extra_images: [...(item.extra_images ?? []), url] }, email);
+      onSaved();
+    } catch (e) { setErr(String((e as Error).message)); }
+    setBusy(false);
+  };
+
+  const removeImage = async (url: string) => {
+    if (!email) return;
+    setBusy(true); setErr(null);
+    try {
+      await saveOverlay(item.id, { extra_images: (item.extra_images ?? []).filter((u) => u !== url) }, email);
       onSaved();
     } catch (e) { setErr(String((e as Error).message)); }
     setBusy(false);
@@ -209,6 +227,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
                 {item.piece_count != null && <span className="dv-chip">{item.piece_count}편</span>}
                 {item.is_bidding && <span className="dv-chip">비딩 제안</span>}
                 {tagsOf(item).slice(0, 6).map((t) => <span key={t} className="dv-chip">#{t}</span>)}
+                {(item.creators ?? []).map((c) => <span key={c} className="dv-chip">◇ {c}</span>)}
               </div>
             </div>
 
@@ -220,7 +239,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
               </div>
             )}
 
-            {links.length > 0 && (
+            {(links.length > 0 || (item.asset_images?.length > 0 && item.thumbnail)) && (
               <div className="dv-links">
                 <div className="lbl">상세 · 링크</div>
                 <div className="row">
@@ -234,7 +253,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
               </div>
             )}
 
-            {email && <Comments item={item} email={email} onChanged={() => onSocialChanged?.()} />}
+            {email && onSocialChanged && <Comments item={item} email={email} onChanged={onSocialChanged} />}
             {staff && (
               <label className="dv-btn" style={{ cursor: "pointer", marginTop: 18, display: "inline-block" }}>
                 이미지 추가
@@ -336,6 +355,34 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
               <label>크리에이터 (쉼표로 구분)</label>
               <input className="input" value={creators} onChange={(e) => setCreators(e.target.value)} placeholder="홍길동, 김제작" />
             </div>
+            <div className="field">
+              <label>상세 링크 (라벨 · URL)</label>
+              {linkRows.map((r, i) => (
+                <div key={i} style={{ display: "flex", gap: 6, marginBottom: 6 }}>
+                  <input className="input" style={{ flex: "0 0 34%" }} placeholder="라벨 (예: 영상 보기)" value={r.label}
+                    onChange={(e) => setLinkRows(linkRows.map((x, j) => j === i ? { ...x, label: e.target.value } : x))} />
+                  <input className="input" style={{ flex: 1 }} placeholder="https://…" value={r.url}
+                    onChange={(e) => setLinkRows(linkRows.map((x, j) => j === i ? { ...x, url: e.target.value } : x))} />
+                  <button className="dv-btn" type="button" onClick={() => setLinkRows(linkRows.filter((_, j) => j !== i))}>✕</button>
+                </div>
+              ))}
+              <button className="dv-btn" type="button" onClick={() => setLinkRows([...linkRows, { label: "", url: "" }])}>+ 링크 추가</button>
+              <span className="hint">비우면 영상 URL(자동)이 그대로 쓰입니다</span>
+            </div>
+            {(item.extra_images ?? []).length > 0 && (
+              <div className="field">
+                <label>추가 이미지 (클릭해서 삭제)</label>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 }}>
+                  {item.extra_images.map((u) => (
+                    <button key={u} type="button" onClick={() => void removeImage(u)} disabled={busy}
+                      style={{ padding: 0, border: "none", background: "none", cursor: "pointer", position: "relative" }}>
+                      <img src={u} alt="" style={{ width: "100%", aspectRatio: "1", objectFit: "cover", display: "block" }} />
+                      <span style={{ position: "absolute", top: 4, right: 4, background: "rgba(0,0,0,.6)", color: "#fff", borderRadius: "50%", width: 20, height: 20, fontSize: 12, lineHeight: "20px", textAlign: "center" }}>✕</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             {err && <div className="err">{err}</div>}
             <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
               <button className="dv-btn accent" onClick={() => void save()} disabled={busy}>{busy ? "저장 중…" : "저장"}</button>
