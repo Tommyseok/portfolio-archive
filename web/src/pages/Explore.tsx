@@ -83,22 +83,20 @@ export function Explore({ items, loading, filters, setFilters, staff, ready, ema
 
   return (
     <>
-      <FilterBar items={pool} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Explore" />
-      {staff && (
-        <div className="container" style={{ padding: "8px 0 4px" }}>
-          {!creating ? (
-            <button className="btn ghost" onClick={() => setCreating(true)}>+ 새 항목 만들기</button>
+      <FilterBar items={pool} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Explore"
+        rightSlot={staff ? (
+          !creating ? (
+            <button className="fpill" onClick={() => setCreating(true)}>+ 새 항목 만들기</button>
           ) : (
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-              <input className="input" placeholder="광고주 / 브랜드명" value={nc} onChange={(e) => setNc(e.target.value)} style={{ maxWidth: 200 }} autoFocus />
-              <input className="input" placeholder="제목 (선택)" value={nt} onChange={(e) => setNt(e.target.value)} style={{ maxWidth: 240 }}
+            <>
+              <input className="input" placeholder="광고주 / 브랜드명" value={nc} onChange={(e) => setNc(e.target.value)} style={{ maxWidth: 160, height: 34 }} autoFocus />
+              <input className="input" placeholder="제목 (선택)" value={nt} onChange={(e) => setNt(e.target.value)} style={{ maxWidth: 190, height: 34 }}
                 onKeyDown={(e) => { if (e.key === "Enter" && nc.trim()) void doCreate(); }} />
-              <button className="btn" onClick={() => void doCreate()} disabled={busy || !nc.trim()}>{busy ? "생성 중…" : "만들기 → 편집"}</button>
-              <button className="btn ghost" onClick={() => { setCreating(false); setNc(""); setNt(""); }}>취소</button>
-            </div>
-          )}
-        </div>
-      )}
+              <button className="fpill on" onClick={() => void doCreate()} disabled={busy || !nc.trim()}>{busy ? "생성 중…" : "만들기"}</button>
+              <button className="fpill" onClick={() => { setCreating(false); setNc(""); setNt(""); }}>취소</button>
+            </>
+          )
+        ) : undefined} />
       <ItemGrid items={filtered} onOpen={setOpen} staff={staff} loading={loading}
         email={email} social={social} onToggleLike={handleLike} onTogglePublish={handlePublish} />
       <DetailView item={open} onClose={() => setOpen(null)} staff={staff} email={email}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Item } from "../types";
 import { tagsOf, formatKey, MEDIA_TAXONOMY, PRODUCTION_METHODS, PRODUCTION_TEAMS } from "../types";
 import type { Filters } from "../lib/filter";
@@ -64,13 +64,14 @@ function Pill({ label, opts, selected, onToggle, grouped }: {
   );
 }
 
-export function FilterBar({ items, filters, setFilters, resultCount, title, hideTeamBidding }: {
+export function FilterBar({ items, filters, setFilters, resultCount, title, hideTeamBidding, rightSlot }: {
   items: Item[];
   filters: Filters;
   setFilters: (f: Filters) => void;
   resultCount: number;
   title: string;
   hideTeamBidding?: boolean; // Showcase 외부 노출 시 제작팀·비딩 숨김
+  rightSlot?: ReactNode;     // 필터 줄 맨 오른쪽 (예: Explore 새 항목 만들기)
 }) {
   const toggle = (key: keyof Filters) => (v: string) => {
     const cur = filters[key] as string[];
@@ -147,6 +148,7 @@ export function FilterBar({ items, filters, setFilters, resultCount, title, hide
               초기화 ({active})
             </button>
           )}
+          {rightSlot && <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>{rightSlot}</div>}
         </div>
       </div>
       <div className="container count-line">
