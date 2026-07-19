@@ -1,6 +1,6 @@
 import type { Item } from "../types";
 import type { CSSProperties } from "react";
-import { selectFeatured, coverOf, coverPosOf, coverZoomOf, headlineOf, subcopyOf, kickerOf } from "../lib/featured";
+import { selectFeatured, coverOf, coverPosOf, coverZoomOf, cardShowsVideo, headlineOf, subcopyOf, kickerOf } from "../lib/featured";
 
 /** 헤드라인 문자열의 *별표* 를 세리프 이탤릭으로 렌더 (예: "촬영 없이 *40종*") */
 function Emph({ text }: { text: string }) {
@@ -22,12 +22,12 @@ function imgStyle(item: Item): CSSProperties {
 
 /** 커버 미디어 — cover_video 있으면 자동재생 영상, 없으면 이미지 배경 */
 function CoverMedia({ item }: { item: Item }) {
-  if (item.cover_video) {
+  if (cardShowsVideo(item)) {
     const vs = { objectPosition: coverPosOf(item), transformOrigin: coverPosOf(item), "--cz": coverZoomOf(item) } as unknown as CSSProperties;
     return (
       <video className="img" autoPlay muted loop playsInline preload="metadata"
         poster={coverOf(item) ?? undefined} style={vs}>
-        <source src={item.cover_video} />
+        <source src={item.cover_video ?? undefined} />
       </video>
     );
   }

@@ -21,6 +21,10 @@ export const coverPosOf = (i: Item): string => i.cover_position || "center";
 /** 커버 확대 배율 (object-fit cover 위 추가 scale). 없으면 1 */
 export const coverZoomOf = (i: Item): number => i.cover_zoom || 1;
 
+/** 카드 썸네일에 동영상을 쓸지 — card_media 명시 우선, 없으면 cover_video 있으면 video */
+export const cardShowsVideo = (i: Item): boolean =>
+  !!i.cover_video && i.card_media !== "image";
+
 /** 문제-해결 헤드라인 */
 export const headlineOf = (i: Item): string =>
   i.featured_headline || i.custom_title || i.client;

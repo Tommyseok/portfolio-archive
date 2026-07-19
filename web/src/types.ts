@@ -62,6 +62,7 @@ export interface Item {
   cover_zoom?: number | null;
   cover_video?: string | null;   // 카드(히어로/타일) 배경 자동재생
   detail_video?: string | null;  // 상세 페이지 전용 재생 동영상 (별개 업로드)
+  card_media?: string | null;    // 카드 썸네일 선택: "image" | "video" (null=자동)
 }
 
 /** 필터에 쓰는 태그 = AI 소구포인트 + 수기 태그 합집합 */

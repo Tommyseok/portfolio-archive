@@ -190,6 +190,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
   const [coverZoom, setCoverZoom] = useState(1);
   const [coverVideo, setCoverVideo] = useState("");
   const [detailVideo, setDetailVideo] = useState("");
+  const [cardMedia, setCardMedia] = useState("");
   const [linkRows, setLinkRows] = useState<{ label: string; url: string }[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -216,6 +217,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
     setCoverZoom(item.cover_zoom ?? 1);
     setCoverVideo(item.cover_video ?? "");
     setDetailVideo(item.detail_video ?? "");
+    setCardMedia(item.card_media ?? "");
     setLinkRows(item.custom_links ?? []);
   }, [item]);
 
@@ -262,6 +264,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
         cover_zoom: coverZoom !== 1 ? coverZoom : null,
         cover_video: coverVideo || null,
         detail_video: detailVideo || null,
+        card_media: cardMedia || null,
         custom_links: linkRows.filter((r) => r.url.trim()),
       }, email);
       onSaved();
@@ -440,6 +443,15 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
                 </label>
               )}
               <span className="hint">Featured 카드(히어로·타일)가 이 영상을 음소거 자동재생하고 그 위에 카피를 표시합니다. (짧은 루프 권장)</span>
+            </div>
+
+            <div className="field">
+              <label>카드 썸네일 표시</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button type="button" className={"dv-btn" + (cardMedia === "image" ? " accent" : "")} onClick={() => setCardMedia("image")}>이미지</button>
+                <button type="button" className={"dv-btn" + (cardMedia !== "image" ? " accent" : "")} onClick={() => setCardMedia("video")}>동영상</button>
+              </div>
+              <span className="hint">Featured 카드에 이미지 커버와 커버 동영상 중 무엇을 보일지 선택. '동영상'은 커버 동영상이 업로드돼 있어야 재생됩니다(없으면 이미지).</span>
             </div>
 
             <div className="field">
