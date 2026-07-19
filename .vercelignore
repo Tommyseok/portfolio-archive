@@ -7,3 +7,10 @@ credentials.json
 token.json
 .env
 .env.*
+# 사이트 서빙에 불필요 (web/dist 가 실제 배포본) — 업로드 100MB 초과 방지
+*.pptx
+~$*
+web/public/
+web/src/
+web/test/
+.superpowers/
