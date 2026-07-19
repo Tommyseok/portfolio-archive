@@ -165,7 +165,7 @@ function HeroReel() {
 function MiddleStatement() {
   const { ref, seen } = useReveal<HTMLElement>(0.3);
   return (
-    <section ref={ref} id="showcase-work" className={"midstate" + (seen ? " in" : "")}>
+    <section ref={ref} className={"midstate" + (seen ? " in" : "")}>
       <div className="midstate-inner">
         <span className="midstate-eyebrow">Our capability</span>
         <h2 className="midstate-title">Full-Stack Creative Service<span className="midstate-dot">.</span></h2>
@@ -207,17 +207,19 @@ export function Showcase({ items, loading, filters, setFilters, staff, email, on
 
       <FeaturedSection items={pool} onOpen={setOpen} />
 
-      {!loading && pool.length === 0 ? (
-        <div className="container empty">
-          <div className="big">Coming soon</div>
-          <p>공개 승인된 소재가 준비되는 대로 이곳에 전시됩니다.{staff ? " — Explore에서 소재를 열어 'Showcase 외부 공개'를 켜면 나타납니다." : ""}</p>
-        </div>
-      ) : (
-        <>
-          <FilterBar items={pool} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Selected work" hideTeamBidding />
-          <WorkGrid items={filtered} onOpen={setOpen} loading={loading} />
-        </>
-      )}
+      <div id="showcase-work" style={{ scrollMarginTop: 62 }}>
+        {!loading && pool.length === 0 ? (
+          <div className="container empty">
+            <div className="big">Coming soon</div>
+            <p>공개 승인된 소재가 준비되는 대로 이곳에 전시됩니다.{staff ? " — Explore에서 소재를 열어 'Showcase 외부 공개'를 켜면 나타납니다." : ""}</p>
+          </div>
+        ) : (
+          <>
+            <FilterBar items={pool} filters={filters} setFilters={setFilters} resultCount={filtered.length} title="Selected work" hideTeamBidding />
+            <WorkGrid items={filtered} onOpen={setOpen} loading={loading} />
+          </>
+        )}
+      </div>
       <DetailView item={open} onClose={() => setOpen(null)} staff={staff} email={email}
         onSaved={() => { onSaved(); setOpen(null); }} />
     </>
