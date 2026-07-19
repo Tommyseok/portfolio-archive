@@ -120,7 +120,8 @@ export async function saveOverlay(
     | "custom_description" | "custom_tags" | "extra_images" | "creators" | "showcase_approved"
     | "media_type" | "format" | "production_method" | "production_team"
     | "is_featured" | "featured_rank" | "featured_headline" | "featured_subcopy"
-    | "featured_kicker" | "featured_cover" | "custom_title" | "custom_links">>,
+    | "featured_kicker" | "featured_cover" | "custom_title" | "custom_links"
+    | "cover_image" | "cover_position">>,
   email: string,
 ) {
   const { error } = await supabase

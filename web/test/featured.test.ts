@@ -45,7 +45,8 @@ describe("selectFeatured", () => {
 });
 
 describe("폴백 헬퍼", () => {
-  it("coverOf: featured_cover → asset_images[0] → thumbnail (개별 컷이 슬라이드보다 우선)", () => {
+  it("coverOf: cover_image → featured_cover → asset_images[0] → thumbnail (개별 컷이 슬라이드보다 우선)", () => {
+    expect(coverOf(it_({ cover_image: "ci", featured_cover: "fc", asset_images: ["a0"] }))).toBe("ci");
     expect(coverOf(it_({ featured_cover: "fc" }))).toBe("fc");
     expect(coverOf(it_({ featured_cover: null, thumbnail: "th", asset_images: ["a0"] }))).toBe("a0");
     expect(coverOf(it_({ featured_cover: null, thumbnail: "th", asset_images: [] }))).toBe("th");

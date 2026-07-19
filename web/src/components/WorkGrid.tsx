@@ -7,8 +7,9 @@ const MAX_LAYERS = 4;
 
 /** 타일 커버로 쓸 이미지들 — 호버 시 순환 */
 const imagesOf = (i: Item): string[] => {
-  const pool = [...(i.asset_images ?? []), ...(i.extra_images ?? [])];
+  let pool = [...(i.asset_images ?? []), ...(i.extra_images ?? [])];
   if (pool.length === 0 && i.thumbnail) pool.push(i.thumbnail);
+  if (i.cover_image) pool = [i.cover_image, ...pool.filter((s) => s !== i.cover_image)]; // 지정 커버를 맨 앞으로
   return pool.slice(0, MAX_LAYERS);
 };
 
@@ -45,6 +46,7 @@ function WorkTile({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
           alt={i === 0 ? `${item.client} — ${item.title}` : ""}
           loading="lazy"
           className={"wt-img" + (i === idx ? " front" : "")}
+          style={item.cover_position ? { objectPosition: item.cover_position } : undefined}
         />
       ))}
       {item.year_month && <span className="wt-count">{item.year_month}</span>}

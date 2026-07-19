@@ -11,9 +11,12 @@ export function selectFeatured(items: Item[]): { hero: Item | null; tiles: Item[
   return { hero: pool[0] ?? null, tiles: pool.slice(1, 5) };
 }
 
-/** 타일/히어로 커버 이미지 — 지정 커버 > 개별 크리에이티브 컷 > (최후) 슬라이드 캡처 */
+/** 타일/히어로 커버 이미지 — 커버지정 > (구)featured_cover > 개별 크리에이티브 컷 > (최후) 슬라이드 캡처 */
 export const coverOf = (i: Item): string | null =>
-  i.featured_cover || i.asset_images?.[0] || i.thumbnail || null;
+  i.cover_image || i.featured_cover || i.asset_images?.[0] || i.thumbnail || null;
+
+/** 커버 포컬 위치 (object-position). 없으면 center */
+export const coverPosOf = (i: Item): string => i.cover_position || "center";
 
 /** 문제-해결 헤드라인 */
 export const headlineOf = (i: Item): string =>

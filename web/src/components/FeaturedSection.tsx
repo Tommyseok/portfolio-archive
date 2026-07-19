@@ -1,5 +1,5 @@
 import type { Item } from "../types";
-import { selectFeatured, coverOf, headlineOf, subcopyOf, kickerOf } from "../lib/featured";
+import { selectFeatured, coverOf, coverPosOf, headlineOf, subcopyOf, kickerOf } from "../lib/featured";
 
 /** 헤드라인 문자열의 *별표* 를 세리프 이탤릭으로 렌더 (예: "촬영 없이 *40종*") */
 function Emph({ text }: { text: string }) {
@@ -13,7 +13,7 @@ const bg = (src: string | null) =>
 function Hero({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
   return (
     <div className="fh" onClick={() => onOpen(item)}>
-      <div className="img" style={bg(coverOf(item))} />
+      <div className="img" style={{ ...bg(coverOf(item)), backgroundPosition: coverPosOf(item) }} />
       <div className="scrim" />
       <div className="in">
         <div className="kicker">{kickerOf(item)}</div>
@@ -27,7 +27,7 @@ function Hero({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
 function Tile({ item, cls, onOpen }: { item: Item; cls: string; onOpen: (i: Item) => void }) {
   return (
     <div className={"ft " + cls} onClick={() => onOpen(item)}>
-      <div className="img" style={bg(coverOf(item))} />
+      <div className="img" style={{ ...bg(coverOf(item)), backgroundPosition: coverPosOf(item) }} />
       <div className="scrim" />
       <div className="txt">
         <h4><Emph text={headlineOf(item)} /></h4>

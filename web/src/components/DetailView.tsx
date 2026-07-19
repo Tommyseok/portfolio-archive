@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { Item } from "../types";
 import { MEDIA_TAXONOMY, PRODUCTION_METHODS, PRODUCTION_TEAMS, SOURCE_TEAM_LABELS, tagsOf } from "../types";
 import { saveOverlay, uploadExtraImage, fetchComments, addComment, deleteComment, featuredRankConflict, type CommentRow } from "../lib/useData";
@@ -77,6 +77,54 @@ function TagEditor({ tags, setTags }: { tags: string[]; setTags: (t: string[]) =
   );
 }
 
+function parseXY(pos: string): [number, number] {
+  const m = pos.match(/(-?\d+(?:\.\d+)?)%\s+(-?\d+(?:\.\d+)?)%/);
+  return m ? [parseFloat(m[1]), parseFloat(m[2])] : [50, 50];
+}
+
+/** 커버 선택(썸네일) + 드래그 포컬(object-position) 에디터 */
+function CoverEditor({ images, cover, setCover, pos, setPos }: {
+  images: string[]; cover: string; setCover: (s: string) => void; pos: string; setPos: (s: string) => void;
+}) {
+  const chosen = cover || images[0] || "";
+  const [x, y] = parseXY(pos);
+  const onMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (e.buttons !== 1) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const nx = Math.round(Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100)));
+    const ny = Math.round(Math.min(100, Math.max(0, ((e.clientY - r.top) / r.height) * 100)));
+    setPos(`${nx}% ${ny}%`);
+  };
+  return (
+    <div className="field">
+      <label>커버 이미지 · 보일 위치</label>
+      {images.length > 1 && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 6, marginBottom: 10 }}>
+          {images.map((src) => (
+            <button key={src} type="button" onClick={() => setCover(src)}
+              style={{ padding: 0, borderRadius: 6, overflow: "hidden", cursor: "pointer", background: "none",
+                border: chosen === src ? "2px solid var(--accent)" : "1px solid rgba(255,255,255,.2)" }}>
+              <img src={src} alt="" style={{ width: "100%", aspectRatio: "1", objectFit: "cover", display: "block" }} />
+            </button>
+          ))}
+        </div>
+      )}
+      {chosen ? (
+        <>
+          <div onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); onMove(e); }} onPointerMove={onMove}
+            style={{ position: "relative", width: 150, height: 200, borderRadius: 8, overflow: "hidden", cursor: "crosshair", userSelect: "none", touchAction: "none" }}>
+            <img src={chosen} alt="" draggable={false}
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: `${x}% ${y}%`, pointerEvents: "none" }} />
+            <span style={{ position: "absolute", left: `${x}%`, top: `${y}%`, transform: "translate(-50%,-50%)", width: 18, height: 18, borderRadius: "50%", border: "2px solid #fff", boxShadow: "0 0 0 2px rgba(0,0,0,.55)", pointerEvents: "none" }} />
+          </div>
+          <span className="hint">타일 비율(세로형) 미리보기 — 점을 드래그해 보일 영역을 맞추세요.</span>
+          {(cover || pos) && <button className="dv-btn" type="button" style={{ marginTop: 6 }} onClick={() => { setCover(""); setPos(""); }}>커버 해제 (기본값)</button>}
+        </>
+      ) : <span className="hint">이미지가 없어 커버를 설정할 수 없습니다.</span>}
+    </div>
+  );
+}
+
 export function DetailView({ item, onClose, staff, email, onSaved, likers = [], onToggleLike, onSocialChanged }: {
   item: Item | null;
   onClose: () => void;
@@ -103,7 +151,8 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
   const [headline, setHeadline] = useState("");
   const [subcopy, setSubcopy] = useState("");
   const [kicker, setKicker] = useState("");
-  const [cover, setCover] = useState("");
+  const [coverImg, setCoverImg] = useState("");
+  const [coverPos, setCoverPos] = useState("");
   const [linkRows, setLinkRows] = useState<{ label: string; url: string }[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -125,7 +174,8 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
     setHeadline(item.featured_headline ?? "");
     setSubcopy(item.featured_subcopy ?? "");
     setKicker(item.featured_kicker ?? "");
-    setCover(item.featured_cover ?? "");
+    setCoverImg(item.cover_image ?? "");
+    setCoverPos(item.cover_position ?? "");
     setLinkRows(item.custom_links ?? []);
   }, [item]);
 
@@ -167,7 +217,8 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
         featured_headline: headline || null,
         featured_subcopy: subcopy || null,
         featured_kicker: kicker || null,
-        featured_cover: cover || null,
+        cover_image: coverImg || null,
+        cover_position: coverPos || null,
         custom_links: linkRows.filter((r) => r.url.trim()),
       }, email);
       onSaved();
@@ -303,15 +354,10 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
                   <label>키커 (히어로 · 익명화 가능)</label>
                   <input className="input" value={kicker} onChange={(e) => setKicker(e.target.value)} placeholder="Featured Case Study · 헬스케어 D사" />
                 </div>
-                <div className="field">
-                  <label>커버 이미지</label>
-                  <select className="input" value={cover} onChange={(e) => setCover(e.target.value)}>
-                    <option value="">기본(썸네일/첫 이미지)</option>
-                    {detailGallery(item).map((src, i) => <option key={src} value={src}>이미지 {i + 1}</option>)}
-                  </select>
-                </div>
               </>
             )}
+
+            <CoverEditor images={detailGallery(item)} cover={coverImg} setCover={setCoverImg} pos={coverPos} setPos={setCoverPos} />
 
             <div className="field">
               <label>타이틀 (상세 뷰 · 비우면 광고주명)</label>

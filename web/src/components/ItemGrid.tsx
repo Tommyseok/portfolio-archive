@@ -24,8 +24,8 @@ function Card({ item, onOpen, email, social, onToggleLike, onTogglePublish }: {
   onToggleLike: (i: Item) => void;
   onTogglePublish: (i: Item) => void;
 }) {
-  // 추출된 크리에이티브 이미지가 있으면 슬라이드 캡처 대신 그걸 커버로
-  const img = item.asset_images?.[0] ?? item.thumbnail ?? item.extra_images?.[0] ?? null;
+  // 지정 커버 > 추출 크리에이티브 > 슬라이드 캡처 > 추가 이미지
+  const img = item.cover_image ?? item.asset_images?.[0] ?? item.thumbnail ?? item.extra_images?.[0] ?? null;
   const likers = social.likes[item.id] ?? [];
   const liked = !!email && likers.includes(email);
   const comments = social.commentCounts[item.id] ?? 0;
@@ -33,7 +33,7 @@ function Card({ item, onOpen, email, social, onToggleLike, onTogglePublish }: {
   return (
     <div className="card" onClick={() => onOpen(item)}>
       <div className="card-thumb">
-        {img ? <img src={img} alt={item.title} loading="lazy" /> : null}
+        {img ? <img src={img} alt={item.title} loading="lazy" style={item.cover_position ? { objectPosition: item.cover_position } : undefined} /> : null}
         <div className="card-overlay">
           <span>{item.custom_description || item.overview || item.search_summary || item.title}</span>
         </div>
