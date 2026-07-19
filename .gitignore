@@ -21,3 +21,6 @@ data/ms-dropbox-2024.sql
 
 # 원본 촬영·쇼릴 소스 (대용량 — 웹용 압축본만 web/public 에)
 front_image/
+
+# superpowers brainstorm mockups
+.superpowers/
