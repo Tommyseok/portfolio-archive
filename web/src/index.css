@@ -763,7 +763,7 @@ img { max-width: 100%; }
 .fh .img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.9s var(--ease); }
 .fh:hover .img { transform: scale(1.04); }
 .fh .scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,10,12,0.8) 0%, rgba(8,10,12,0.46) 44%, rgba(8,10,12,0.05) 80%); }
-.fh .in { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; padding: 56px; color: #fff; z-index: 2; text-align: left; }
+.fh .in { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; padding: 0 56px 50px 0; color: #fff; z-index: 2; text-align: left; }
 .fh .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.9; margin-bottom: 16px; }
 .fh h3 { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.12; letter-spacing: -0.02em; font-weight: 800; max-width: 16em; }
 .fh h3 i, .ft h4 i { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: 0; }
@@ -775,7 +775,7 @@ img { max-width: 100%; }
 .ft .img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s var(--ease); }
 .ft:hover .img { transform: scale(1.05); }
 .ft .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,10,12,0.66) 0%, rgba(8,10,12,0.14) 44%, rgba(8,10,12,0) 72%); }
-.ft .txt { position: absolute; top: 0; left: 0; right: 0; padding: 30px 30px 0; color: #fff; z-index: 2; text-align: left; }
+.ft .txt { position: absolute; top: 0; left: 0; right: 0; padding: 30px 30px 0 0; color: #fff; z-index: 2; text-align: left; }
 .ft h4 { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.28; }
 .ft p { margin-top: 10px; font-size: 13.5px; line-height: 1.55; color: rgba(255,255,255,0.8); max-width: 22em; }
 .ft.big { grid-row: span 2; }
@@ -785,7 +785,7 @@ img { max-width: 100%; }
   .ftiles { grid-template-columns: 1fr 1fr; grid-template-rows: auto; height: auto; }
   .ft { min-height: 240px; } .ft.big { grid-row: auto; }
   .ft.c1,.ft.c2,.ft.c3,.ft.c4 { grid-column: auto; grid-row: auto; }
-  .fh { min-height: 380px; } .fh .in { padding: 32px; }
+  .fh { min-height: 380px; } .fh .in { padding: 0 24px 28px 0; }
 }
 
 /* ══════════ 통합 DetailView (다크 풀스크린) ══════════ */

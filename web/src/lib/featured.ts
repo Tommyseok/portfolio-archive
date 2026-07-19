@@ -11,9 +11,9 @@ export function selectFeatured(items: Item[]): { hero: Item | null; tiles: Item[
   return { hero: pool[0] ?? null, tiles: pool.slice(1, 5) };
 }
 
-/** 타일/히어로 커버 이미지 */
+/** 타일/히어로 커버 이미지 — 지정 커버 > 개별 크리에이티브 컷 > (최후) 슬라이드 캡처 */
 export const coverOf = (i: Item): string | null =>
-  i.featured_cover || i.thumbnail || i.asset_images?.[0] || null;
+  i.featured_cover || i.asset_images?.[0] || i.thumbnail || null;
 
 /** 문제-해결 헤드라인 */
 export const headlineOf = (i: Item): string =>
