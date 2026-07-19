@@ -34,7 +34,10 @@ export function TopNav({ session, isStaff, isAdmin, q, setQ }: {
   const goWork = (e: React.MouseEvent) => {
     e.preventDefault();
     navigate("/showcase");
-    setTimeout(() => document.getElementById("showcase-work")?.scrollIntoView({ behavior: "auto", block: "start" }), 60);
+    setTimeout(() => {
+      const el = document.getElementById("showcase-work");
+      if (el) window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 62);
+    }, 60);
   };
 
   // 홈(/) 최상단이면 브랜드 밑줄, 스크롤 다운/타 페이지면 Showcase 라운드박스

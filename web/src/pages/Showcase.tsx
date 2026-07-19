@@ -203,7 +203,10 @@ export function Showcase({ items, loading, filters, setFilters, staff, email, on
   const { pathname } = useLocation();
   useEffect(() => {
     if (pathname !== "/showcase") return;
-    const jump = () => document.getElementById("showcase-work")?.scrollIntoView({ behavior: "auto", block: "start" });
+    const jump = () => {
+      const el = document.getElementById("showcase-work");
+      if (el) window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 62); // 내비 높이만큼 오프셋 (scrollIntoView 는 스티키 필터바로 오버슈트)
+    };
     jump();
     const ts = [50, 200, 500, 1000, 1800].map((d) => setTimeout(jump, d));
     window.addEventListener("load", jump);
