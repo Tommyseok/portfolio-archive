@@ -1,5 +1,6 @@
 import type { Item } from "../types";
-import { selectFeatured, coverOf, coverPosOf, headlineOf, subcopyOf, kickerOf } from "../lib/featured";
+import type { CSSProperties } from "react";
+import { selectFeatured, coverOf, coverPosOf, coverZoomOf, headlineOf, subcopyOf, kickerOf } from "../lib/featured";
 
 /** 헤드라인 문자열의 *별표* 를 세리프 이탤릭으로 렌더 (예: "촬영 없이 *40종*") */
 function Emph({ text }: { text: string }) {
@@ -7,13 +8,22 @@ function Emph({ text }: { text: string }) {
   return <>{parts.map((p, i) => (i % 2 === 1 ? <i key={i}>{p}</i> : <span key={i}>{p}</span>))}</>;
 }
 
-const bg = (src: string | null) =>
-  src ? { backgroundImage: `url(${src})` } : { background: "radial-gradient(120% 120% at 60% 30%,#33434e,#0c1419)" };
+function imgStyle(item: Item): CSSProperties {
+  const src = coverOf(item);
+  const s: Record<string, string | number> = {
+    backgroundPosition: coverPosOf(item),
+    transformOrigin: coverPosOf(item),
+    "--cz": coverZoomOf(item),
+  };
+  if (src) s.backgroundImage = `url(${src})`;
+  else s.background = "radial-gradient(120% 120% at 60% 30%,#33434e,#0c1419)";
+  return s as unknown as CSSProperties;
+}
 
 function Hero({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
   return (
     <div className="fh" onClick={() => onOpen(item)}>
-      <div className="img" style={{ ...bg(coverOf(item)), backgroundPosition: coverPosOf(item) }} />
+      <div className="img" style={imgStyle(item)} />
       <div className="scrim" />
       <div className="in">
         <div className="kicker">{kickerOf(item)}</div>
@@ -27,7 +37,7 @@ function Hero({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
 function Tile({ item, cls, onOpen }: { item: Item; cls: string; onOpen: (i: Item) => void }) {
   return (
     <div className={"ft " + cls} onClick={() => onOpen(item)}>
-      <div className="img" style={{ ...bg(coverOf(item)), backgroundPosition: coverPosOf(item) }} />
+      <div className="img" style={imgStyle(item)} />
       <div className="scrim" />
       <div className="txt">
         <h4><Emph text={headlineOf(item)} /></h4>

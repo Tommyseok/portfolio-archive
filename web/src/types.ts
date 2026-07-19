@@ -59,6 +59,7 @@ export interface Item {
   // 커버 (타일·카드·상세 대표 이미지 + 포컬 위치)
   cover_image?: string | null;
   cover_position?: string | null;
+  cover_zoom?: number | null;
 }
 
 /** 필터에 쓰는 태그 = AI 소구포인트 + 수기 태그 합집합 */

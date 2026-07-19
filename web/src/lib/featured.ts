@@ -18,6 +18,9 @@ export const coverOf = (i: Item): string | null =>
 /** 커버 포컬 위치 (object-position). 없으면 center */
 export const coverPosOf = (i: Item): string => i.cover_position || "center";
 
+/** 커버 확대 배율 (object-fit cover 위 추가 scale). 없으면 1 */
+export const coverZoomOf = (i: Item): number => i.cover_zoom || 1;
+
 /** 문제-해결 헤드라인 */
 export const headlineOf = (i: Item): string =>
   i.featured_headline || i.custom_title || i.client;

@@ -698,10 +698,10 @@ img { max-width: 100%; }
 .work-tile img.wt-img {
   position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover;
-  transform: scale(1.015);
+  transform: scale(calc(1.015 * var(--cz, 1)));
   transition: transform 1.4s var(--ease), opacity 0.55s ease;
 }
-.work-tile:hover img.wt-img.front { transform: scale(1.06); }
+.work-tile:hover img.wt-img.front { transform: scale(calc(1.06 * var(--cz, 1))); }
 .work-tile img.wt-img { opacity: 0; }
 .work-tile img.wt-img.front { opacity: 1; }
 
@@ -765,8 +765,8 @@ img { max-width: 100%; }
 
 /* 히어로 — 풀 이미지 + 좌하단 오버레이 */
 .fh { position: relative; overflow: hidden; min-height: 520px; cursor: pointer; }
-.fh .img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.9s var(--ease); }
-.fh:hover .img { transform: scale(1.04); }
+.fh .img { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(var(--cz, 1)); transition: transform 0.9s var(--ease); }
+.fh:hover .img { transform: scale(calc(1.04 * var(--cz, 1))); }
 .fh .scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,10,12,0.8) 0%, rgba(8,10,12,0.46) 44%, rgba(8,10,12,0.05) 80%); }
 .fh .in { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; padding: 56px; color: #fff; z-index: 2; text-align: left; }
 .fh .kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.9; margin-bottom: 16px; }
@@ -777,8 +777,8 @@ img { max-width: 100%; }
 /* 4타일 — 2스택+1+1, 갭 0, 직각 */
 .ftiles { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; height: 660px; }
 .ft { position: relative; overflow: hidden; cursor: pointer; }
-.ft .img { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.8s var(--ease); }
-.ft:hover .img { transform: scale(1.05); }
+.ft .img { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(var(--cz, 1)); transition: transform 0.8s var(--ease); }
+.ft:hover .img { transform: scale(calc(1.05 * var(--cz, 1))); }
 .ft .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,10,12,0.66) 0%, rgba(8,10,12,0.14) 44%, rgba(8,10,12,0) 72%); }
 .ft .txt { position: absolute; top: 0; left: 0; right: 0; padding: 30px; color: #fff; z-index: 2; text-align: left; }
 .ft h4 { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.28; }

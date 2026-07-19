@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { Item } from "../types";
 import { useReveal } from "../lib/useReveal";
 
@@ -30,6 +30,8 @@ function WorkTile({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
   useEffect(() => stopCycle, []);
 
   const services = [item.media_type, item.format].filter(Boolean).join(", ");
+  const coverStyle = { ["--cz"]: item.cover_zoom || 1 } as CSSProperties;
+  if (item.cover_position) { coverStyle.objectPosition = item.cover_position; coverStyle.transformOrigin = item.cover_position; }
 
   return (
     <div
@@ -46,7 +48,7 @@ function WorkTile({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
           alt={i === 0 ? `${item.client} — ${item.title}` : ""}
           loading="lazy"
           className={"wt-img" + (i === idx ? " front" : "")}
-          style={item.cover_position ? { objectPosition: item.cover_position } : undefined}
+          style={coverStyle}
         />
       ))}
       {item.year_month && <span className="wt-count">{item.year_month}</span>}
