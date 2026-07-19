@@ -189,6 +189,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
   const [coverPos, setCoverPos] = useState("");
   const [coverZoom, setCoverZoom] = useState(1);
   const [coverVideo, setCoverVideo] = useState("");
+  const [detailVideo, setDetailVideo] = useState("");
   const [linkRows, setLinkRows] = useState<{ label: string; url: string }[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -214,6 +215,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
     setCoverPos(item.cover_position ?? "");
     setCoverZoom(item.cover_zoom ?? 1);
     setCoverVideo(item.cover_video ?? "");
+    setDetailVideo(item.detail_video ?? "");
     setLinkRows(item.custom_links ?? []);
   }, [item]);
 
@@ -259,6 +261,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
         cover_position: coverPos || null,
         cover_zoom: coverZoom !== 1 ? coverZoom : null,
         cover_video: coverVideo || null,
+        detail_video: detailVideo || null,
         custom_links: linkRows.filter((r) => r.url.trim()),
       }, email);
       onSaved();
@@ -288,10 +291,10 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
     setBusy(false);
   };
 
-  const uploadVid = async (file: File) => {
+  const uploadVideoFile = async (file: File, set: (u: string) => void) => {
     if (!email) return;
     setBusy(true); setErr(null);
-    try { setCoverVideo(await uploadCoverVideo(item.id, file)); }
+    try { set(await uploadCoverVideo(item.id, file)); }
     catch (e) { setErr(String((e as Error).message)); }
     setBusy(false);
   };
@@ -339,9 +342,9 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
               </div>
             </div>
 
-            {item.cover_video && (
+            {item.detail_video && (
               <div className="dv-video">
-                <video src={item.cover_video} controls autoPlay muted loop playsInline
+                <video src={item.detail_video} controls autoPlay muted loop playsInline
                   poster={item.cover_image ?? item.thumbnail ?? undefined} />
               </div>
             )}
@@ -424,7 +427,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
             <CoverEditor images={detailGallery(item)} cover={coverImg} setCover={setCoverImg} pos={coverPos} setPos={setCoverPos} zoom={coverZoom} setZoom={setCoverZoom} />
 
             <div className="field">
-              <label>커버 동영상 (자동재생 · 선택)</label>
+              <label>커버 동영상 — 카드 배경 자동재생 (선택)</label>
               {coverVideo ? (
                 <div>
                   <video src={coverVideo} muted loop playsInline autoPlay style={{ width: 150, aspectRatio: "4 / 3", objectFit: "cover", borderRadius: 8, background: "#000", display: "block" }} />
@@ -433,10 +436,26 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
               ) : (
                 <label className="dv-btn" style={{ cursor: "pointer", display: "inline-block" }}>
                   동영상 업로드 (mp4/webm)
-                  <input type="file" accept="video/*" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) void uploadVid(f); }} />
+                  <input type="file" accept="video/*" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) void uploadVideoFile(f, setCoverVideo); }} />
                 </label>
               )}
-              <span className="hint">있으면 Featured 카드가 이 영상을 음소거 자동재생하고 그 위에 카피가 표시됩니다. (짧은 루프 권장)</span>
+              <span className="hint">Featured 카드(히어로·타일)가 이 영상을 음소거 자동재생하고 그 위에 카피를 표시합니다. (짧은 루프 권장)</span>
+            </div>
+
+            <div className="field">
+              <label>상세 동영상 — 상세 페이지 재생 (선택)</label>
+              {detailVideo ? (
+                <div>
+                  <video src={detailVideo} muted loop playsInline autoPlay style={{ width: 220, maxWidth: "100%", borderRadius: 8, background: "#000", display: "block" }} />
+                  <button className="dv-btn" type="button" style={{ marginTop: 6 }} onClick={() => setDetailVideo("")}>동영상 제거</button>
+                </div>
+              ) : (
+                <label className="dv-btn" style={{ cursor: "pointer", display: "inline-block" }}>
+                  동영상 업로드 (mp4/webm)
+                  <input type="file" accept="video/*" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) void uploadVideoFile(f, setDetailVideo); }} />
+                </label>
+              )}
+              <span className="hint">상세 페이지 안에서 이 영상을 원본 비율 그대로 플레이어로 재생합니다. 카드 커버 영상과 별개로 업로드하세요.</span>
             </div>
 
             <div className="field">

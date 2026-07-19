@@ -60,7 +60,8 @@ export interface Item {
   cover_image?: string | null;
   cover_position?: string | null;
   cover_zoom?: number | null;
-  cover_video?: string | null;
+  cover_video?: string | null;   // 카드(히어로/타일) 배경 자동재생
+  detail_video?: string | null;  // 상세 페이지 전용 재생 동영상 (별개 업로드)
 }
 
 /** 필터에 쓰는 태그 = AI 소구포인트 + 수기 태그 합집합 */
