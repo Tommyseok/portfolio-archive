@@ -840,3 +840,9 @@ img { max-width: 100%; }
 .dv-edit .toggle-row { border-color: rgba(255,255,255,0.14); }
 .dv-like { display: inline-flex; align-items: center; gap: 5px; padding: 8px 13px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: #f4f4f5; font-size: 13px; font-weight: 700; cursor: pointer; }
 .dv-like.liked { color: #ff6b81; border-color: rgba(255,107,129,0.5); }
+
+/* ── 관리자 접속 로그 테이블 ── */
+.admin-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.admin-table th { text-align: left; color: var(--ink-3); font-weight: 600; font-size: 12px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.admin-table td { padding: 8px 12px; border-bottom: 1px solid var(--line-soft); }
+.admin-table tbody tr:hover { background: rgba(16, 16, 20, 0.02); }

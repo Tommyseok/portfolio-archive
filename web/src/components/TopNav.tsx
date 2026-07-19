@@ -3,9 +3,10 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 
-export function TopNav({ session, isStaff, q, setQ }: {
+export function TopNav({ session, isStaff, isAdmin, q, setQ }: {
   session: Session | null;
   isStaff: boolean;
+  isAdmin?: boolean;
   q: string;
   setQ: (v: string) => void;
 }) {
@@ -49,6 +50,7 @@ export function TopNav({ session, isStaff, q, setQ }: {
           <NavLink to="/" end onClick={goWork} className={({ isActive }) => "nav-link" + ((overlay ? scrolled : isActive) ? " active" : "")}>Showcase</NavLink>
           <NavLink to="/explore" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Explore</NavLink>
           <NavLink to="/directory" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Directory</NavLink>
+          {isAdmin && <NavLink to="/admin" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Admin</NavLink>}
         </nav>
         <div className="nav-right">
           <div className="nav-search">
