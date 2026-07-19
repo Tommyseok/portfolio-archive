@@ -1,0 +1,349 @@
+import { useEffect, useState } from "react";
+import type { Item } from "../types";
+import { MEDIA_TAXONOMY, PRODUCTION_METHODS, PRODUCTION_TEAMS, SOURCE_TEAM_LABELS, tagsOf } from "../types";
+import { saveOverlay, uploadExtraImage, fetchComments, addComment, deleteComment, type CommentRow } from "../lib/useData";
+import { detailTitle, detailSubtitle, detailDesc, detailGallery, detailLinks } from "../lib/detail";
+
+const nameOf = (email: string) => email.split("@")[0];
+const timeOf = (iso: string) => {
+  const d = new Date(iso);
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+};
+
+function Comments({ item, email, onChanged }: { item: Item; email: string | null; onChanged: () => void }) {
+  const [rows, setRows] = useState<CommentRow[]>([]);
+  const [draft, setDraft] = useState("");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    setRows([]); setDraft("");
+    void fetchComments(item.id).then(setRows).catch(() => setRows([]));
+  }, [item.id]);
+  const submit = async () => {
+    const body = draft.trim();
+    if (!body || !email) return;
+    setBusy(true);
+    try { await addComment(item.id, email, body); setDraft(""); setRows(await fetchComments(item.id)); onChanged(); }
+    finally { setBusy(false); }
+  };
+  const remove = async (id: string) => {
+    setBusy(true);
+    try { await deleteComment(id); setRows((r) => r.filter((c) => c.id !== id)); onChanged(); }
+    finally { setBusy(false); }
+  };
+  return (
+    <div style={{ marginTop: 26, borderTop: "1px solid rgba(255,255,255,0.14)", paddingTop: 18 }}>
+      <div style={{ fontWeight: 800, fontSize: 13.5 }}>코멘트 {rows.length > 0 && <span style={{ color: "#7a7c82", fontFamily: "var(--mono)", fontSize: 12 }}>{rows.length}</span>}</div>
+      <div className="cmt-list">
+        {rows.map((c) => (
+          <div key={c.id} className="cmt">
+            <div className="cmt-avatar">{nameOf(c.author_email).slice(0, 2)}</div>
+            <div className="cmt-body">
+              <div className="cmt-head">
+                <span className="cmt-author">{nameOf(c.author_email)}</span>
+                <span className="cmt-time">{timeOf(c.created_at)}</span>
+                {email === c.author_email && <button className="cmt-del" onClick={() => void remove(c.id)} disabled={busy}>삭제</button>}
+              </div>
+              <div className="cmt-text">{c.body}</div>
+            </div>
+          </div>
+        ))}
+        {rows.length === 0 && <div style={{ fontSize: 12.5, color: "#7a7c82" }}>첫 코멘트를 남겨보세요.</div>}
+      </div>
+      <div className="cmt-form">
+        <input className="input" placeholder="코멘트 입력 후 Enter" value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) { e.preventDefault(); void submit(); } }} />
+        <button className="dv-btn" onClick={() => void submit()} disabled={busy || !draft.trim()}>등록</button>
+      </div>
+    </div>
+  );
+}
+
+function TagEditor({ tags, setTags }: { tags: string[]; setTags: (t: string[]) => void }) {
+  const [draft, setDraft] = useState("");
+  const add = () => {
+    const v = draft.trim().replace(/^#/, "");
+    if (v && !tags.includes(v)) setTags([...tags, v]);
+    setDraft("");
+  };
+  return (
+    <div className="tagbox">
+      {tags.map((t) => (
+        <button key={t} className="tg" onClick={() => setTags(tags.filter((x) => x !== t))} title="클릭해서 제거">#{t} ✕</button>
+      ))}
+      <input value={draft} placeholder="태그 입력 후 Enter" onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }} onBlur={add} />
+    </div>
+  );
+}
+
+export function DetailView({ item, onClose, staff, email, onSaved, likers = [], onToggleLike, onSocialChanged }: {
+  item: Item | null;
+  onClose: () => void;
+  staff: boolean;
+  email: string | null;
+  onSaved: () => void;
+  likers?: string[];
+  onToggleLike?: (i: Item) => void;
+  onSocialChanged?: () => void;
+}) {
+  const [edit, setEdit] = useState(false);
+  const [desc, setDesc] = useState("");
+  const [title, setTitle] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [creators, setCreators] = useState("");
+  const [approved, setApproved] = useState(false);
+  const [media, setMedia] = useState("");
+  const [fmt, setFmt] = useState("");
+  const [method, setMethod] = useState("");
+  const [pteam, setPteam] = useState("");
+  // featured
+  const [feat, setFeat] = useState(false);
+  const [rank, setRank] = useState<string>("");
+  const [headline, setHeadline] = useState("");
+  const [subcopy, setSubcopy] = useState("");
+  const [kicker, setKicker] = useState("");
+  const [cover, setCover] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!item) return;
+    setEdit(false); setErr(null);
+    setDesc(item.custom_description ?? "");
+    setTitle(item.custom_title ?? "");
+    setTags(item.custom_tags ?? []);
+    setCreators((item.creators ?? []).join(", "));
+    setApproved(item.showcase_approved);
+    setMedia(item.media_type ?? "");
+    setFmt(item.format ?? "");
+    setMethod(item.production_method ?? "");
+    setPteam(item.production_team ?? "");
+    setFeat(item.is_featured ?? false);
+    setRank(item.featured_rank != null ? String(item.featured_rank) : "");
+    setHeadline(item.featured_headline ?? "");
+    setSubcopy(item.featured_subcopy ?? "");
+    setKicker(item.featured_kicker ?? "");
+    setCover(item.featured_cover ?? "");
+  }, [item]);
+
+  useEffect(() => {
+    if (!item) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [item, onClose]);
+
+  if (!item) return null;
+
+  const gallery = detailGallery(item);
+  const links = detailLinks(item);
+  const liked = !!email && likers.includes(email);
+
+  const save = async () => {
+    if (!email) return;
+    setBusy(true); setErr(null);
+    try {
+      await saveOverlay(item.id, {
+        custom_description: desc || null,
+        custom_title: title || null,
+        custom_tags: tags,
+        creators: creators.split(",").map((s) => s.trim()).filter(Boolean),
+        showcase_approved: approved,
+        media_type: media || null,
+        format: fmt || null,
+        production_method: method || null,
+        production_team: pteam || null,
+        is_featured: feat,
+        featured_rank: feat && rank ? Number(rank) : null,
+        featured_headline: headline || null,
+        featured_subcopy: subcopy || null,
+        featured_kicker: kicker || null,
+        featured_cover: cover || null,
+      }, email);
+      onSaved();
+      setEdit(false);
+    } catch (e) { setErr(String((e as Error).message)); }
+    setBusy(false);
+  };
+
+  const upload = async (file: File) => {
+    if (!email) return;
+    setBusy(true); setErr(null);
+    try {
+      const url = await uploadExtraImage(item.id, file);
+      await saveOverlay(item.id, { extra_images: [...(item.extra_images ?? []), url] }, email);
+      onSaved();
+    } catch (e) { setErr(String((e as Error).message)); }
+    setBusy(false);
+  };
+
+  return (
+    <div className="dv-back" onClick={onClose}>
+      <div className="dv" onClick={(e) => e.stopPropagation()}>
+        <div className="dv-top">
+          <span className="dv-brand">MADUP — Selected Work</span>
+          <div className="dv-actions">
+            {onToggleLike && email && (
+              <button className={"dv-like" + (liked ? " liked" : "")} onClick={() => onToggleLike(item)} aria-label="좋아요">
+                ♥ {likers.length > 0 && likers.length}
+              </button>
+            )}
+            {staff && !edit && <button className="dv-btn" onClick={() => setEdit(true)}>✎ 편집</button>}
+            <button className="dv-close" onClick={onClose} aria-label="닫기">✕</button>
+          </div>
+        </div>
+
+        {!edit && (
+          <>
+            <div className="dv-head">
+              <h1 className="dv-title">{detailTitle(item)}</h1>
+              {detailSubtitle(item) && <div className="dv-subtitle">{detailSubtitle(item)}</div>}
+              {detailDesc(item) && <p className="dv-desc">{detailDesc(item)}</p>}
+              <div className="dv-meta">
+                {item.year_month && <span className="dv-chip">{item.year_month}</span>}
+                <span className="dv-chip">{SOURCE_TEAM_LABELS[item.source_team]}</span>
+                {item.production_method && <span className="dv-chip">{item.production_method}</span>}
+                {item.industry && <span className="dv-chip">{item.industry}</span>}
+                {item.piece_count != null && <span className="dv-chip">{item.piece_count}편</span>}
+                {item.is_bidding && <span className="dv-chip">비딩 제안</span>}
+                {tagsOf(item).slice(0, 6).map((t) => <span key={t} className="dv-chip">#{t}</span>)}
+              </div>
+            </div>
+
+            {gallery.length > 0 && (
+              <div className="dv-gallery">
+                {gallery.map((src) => (
+                  <a key={src} href={src} target="_blank" rel="noreferrer"><img src={src} alt={item.client} loading="lazy" /></a>
+                ))}
+              </div>
+            )}
+
+            {links.length > 0 && (
+              <div className="dv-links">
+                <div className="lbl">상세 · 링크</div>
+                <div className="row">
+                  {links.map((l) => (
+                    <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="dv-lbtn">{l.label} ↗</a>
+                  ))}
+                  {item.asset_images?.length > 0 && item.thumbnail && (
+                    <a className="dv-lbtn ghost" href={item.thumbnail} target="_blank" rel="noreferrer">원본 슬라이드 ↗</a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {email && <Comments item={item} email={email} onChanged={() => onSocialChanged?.()} />}
+            {staff && (
+              <label className="dv-btn" style={{ cursor: "pointer", marginTop: 18, display: "inline-block" }}>
+                이미지 추가
+                <input type="file" accept="image/*" style={{ display: "none" }}
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) void upload(f); }} />
+              </label>
+            )}
+          </>
+        )}
+
+        {edit && staff && (
+          <div className="dv-edit">
+            <div className="toggle-row">
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 13.5 }}>Showcase 외부 공개</div>
+                <div className="hint">동의된 소재만 외부(비로그인)에 노출됩니다</div>
+              </div>
+              <button className={"dv-btn" + (approved ? " accent" : "")} onClick={() => setApproved(!approved)}>{approved ? "공개 중" : "비공개"}</button>
+            </div>
+
+            <div className="toggle-row" style={{ marginTop: 10 }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 13.5 }}>Featured Case Study</div>
+                <div className="hint">{feat && !approved ? "⚠ 공개 승인해야 외부에 노출됩니다" : "메인 상단 Featured 섹션에 노출 (최대 5개)"}</div>
+              </div>
+              <button className={"dv-btn" + (feat ? " accent" : "")} onClick={() => setFeat(!feat)}>{feat ? "Featured" : "일반"}</button>
+            </div>
+
+            {feat && (
+              <>
+                <div className="field">
+                  <label>순서 (1=히어로 · 2~5=타일)</label>
+                  <select className="input" value={rank} onChange={(e) => setRank(e.target.value)}>
+                    <option value="">순서 선택</option>
+                    {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n === 1 ? "1 (히어로)" : `${n} (타일)`}</option>)}
+                  </select>
+                </div>
+                <div className="field">
+                  <label>헤드라인 (문제-해결 · *별표*는 이탤릭 강조)</label>
+                  <input className="input" value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="모델 계약 없이, *심의를 통과한* 건기식 캠페인" />
+                </div>
+                <div className="field">
+                  <label>보조 카피 / 히어로 리드</label>
+                  <textarea className="input" rows={2} value={subcopy} onChange={(e) => setSubcopy(e.target.value)} placeholder="한 줄 요약 (타일) 또는 리드 문단 (히어로)" />
+                </div>
+                <div className="field">
+                  <label>키커 (히어로 · 익명화 가능)</label>
+                  <input className="input" value={kicker} onChange={(e) => setKicker(e.target.value)} placeholder="Featured Case Study · 헬스케어 D사" />
+                </div>
+                <div className="field">
+                  <label>커버 이미지</label>
+                  <select className="input" value={cover} onChange={(e) => setCover(e.target.value)}>
+                    <option value="">기본(썸네일/첫 이미지)</option>
+                    {detailGallery(item).map((src, i) => <option key={src} value={src}>이미지 {i + 1}</option>)}
+                  </select>
+                </div>
+              </>
+            )}
+
+            <div className="field">
+              <label>타이틀 (상세 뷰 · 비우면 광고주명)</label>
+              <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={item.client} />
+            </div>
+            <div className="field">
+              <label>소재타입</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                <select className="input" value={media} onChange={(e) => { setMedia(e.target.value); setFmt(MEDIA_TAXONOMY[e.target.value]?.[0] ?? ""); }}>
+                  <option value="">대분류 선택</option>
+                  {Object.keys(MEDIA_TAXONOMY).map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+                <select className="input" value={fmt} onChange={(e) => setFmt(e.target.value)} disabled={!media}>
+                  <option value="">세부 선택</option>
+                  {(MEDIA_TAXONOMY[media] ?? []).map((f) => <option key={f} value={f}>{f}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="field">
+              <label>제작방식 · 제작팀</label>
+              <div style={{ display: "flex", gap: 8 }}>
+                <select className="input" value={method} onChange={(e) => setMethod(e.target.value)}>
+                  <option value="">제작방식 선택</option>
+                  {PRODUCTION_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+                <select className="input" value={pteam} onChange={(e) => setPteam(e.target.value)}>
+                  <option value="">제작팀 선택</option>
+                  {PRODUCTION_TEAMS.map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="field">
+              <label>설명 (상세 소개)</label>
+              <textarea className="input" rows={3} value={desc} onChange={(e) => setDesc(e.target.value)} placeholder={item.overview || "이 소재에 대한 설명"} />
+            </div>
+            <div className="field">
+              <label>태그 (복수 입력)</label>
+              <TagEditor tags={tags} setTags={setTags} />
+            </div>
+            <div className="field">
+              <label>크리에이터 (쉼표로 구분)</label>
+              <input className="input" value={creators} onChange={(e) => setCreators(e.target.value)} placeholder="홍길동, 김제작" />
+            </div>
+            {err && <div className="err">{err}</div>}
+            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+              <button className="dv-btn accent" onClick={() => void save()} disabled={busy}>{busy ? "저장 중…" : "저장"}</button>
+              <button className="dv-btn" onClick={() => setEdit(false)} disabled={busy}>취소</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
