@@ -1,0 +1,61 @@
+import type { Item } from "../types";
+import { selectFeatured, coverOf, headlineOf, subcopyOf, kickerOf } from "../lib/featured";
+
+/** 헤드라인 문자열의 *별표* 를 세리프 이탤릭으로 렌더 (예: "촬영 없이 *40종*") */
+function Emph({ text }: { text: string }) {
+  const parts = text.split(/\*([^*]+)\*/g);
+  return <>{parts.map((p, i) => (i % 2 === 1 ? <i key={i}>{p}</i> : <span key={i}>{p}</span>))}</>;
+}
+
+const bg = (src: string | null) =>
+  src ? { backgroundImage: `url(${src})` } : { background: "radial-gradient(120% 120% at 60% 30%,#33434e,#0c1419)" };
+
+function Hero({ item, onOpen }: { item: Item; onOpen: (i: Item) => void }) {
+  return (
+    <div className="fh" onClick={() => onOpen(item)}>
+      <div className="img" style={bg(coverOf(item))} />
+      <div className="scrim" />
+      <div className="in">
+        <div className="kicker">{kickerOf(item)}</div>
+        <h3><Emph text={headlineOf(item)} /></h3>
+        {subcopyOf(item) && <p className="lead">{subcopyOf(item)}</p>}
+      </div>
+    </div>
+  );
+}
+
+function Tile({ item, cls, onOpen }: { item: Item; cls: string; onOpen: (i: Item) => void }) {
+  return (
+    <div className={"ft " + cls} onClick={() => onOpen(item)}>
+      <div className="img" style={bg(coverOf(item))} />
+      <div className="scrim" />
+      <div className="txt">
+        <h4><Emph text={headlineOf(item)} /></h4>
+        {subcopyOf(item) && <p>{subcopyOf(item)}</p>}
+      </div>
+    </div>
+  );
+}
+
+/** 대분류 표시: 좌열 스택(c1 위, c4 아래) + 중앙 c2(big) + 우 c3(big) */
+const TILE_CLS = ["c1", "c2 big", "c3 big", "c4"];
+
+export function FeaturedSection({ items, onOpen }: { items: Item[]; onOpen: (i: Item) => void }) {
+  const { hero, tiles } = selectFeatured(items);
+  if (!hero) return null;
+
+  return (
+    <section className="container featured">
+      <div className="featured-eyebrow">
+        <span className="t">Featured Case Studies</span>
+        <span className="rule" />
+      </div>
+      <Hero item={hero} onOpen={onOpen} />
+      {tiles.length > 0 && (
+        <div className="ftiles">
+          {tiles.map((t, i) => <Tile key={t.id} item={t} cls={TILE_CLS[i]} onOpen={onOpen} />)}
+        </div>
+      )}
+    </section>
+  );
+}
