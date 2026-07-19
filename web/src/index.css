@@ -812,6 +812,9 @@ img { max-width: 100%; }
 .dv-meta { margin-top: 22px; display: flex; gap: 8px; flex-wrap: wrap; }
 .dv-chip { font-size: 12.5px; font-weight: 600; color: #f4f4f5; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); padding: 6px 13px; border-radius: 999px; }
 
+/* 상세 뷰 인라인 동영상 플레이어 — 원본 비율 그대로(크롭 없음) */
+.dv-video { margin-bottom: 16px; }
+.dv-video video { max-width: min(900px, 100%); max-height: 72vh; border-radius: 12px; background: #000; display: block; }
 .dv-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .dv-gallery a { display: block; }
 .dv-gallery img { width: 100%; aspect-ratio: 9/13; object-fit: cover; display: block; }

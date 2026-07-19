@@ -339,6 +339,13 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
               </div>
             </div>
 
+            {item.cover_video && (
+              <div className="dv-video">
+                <video src={item.cover_video} controls autoPlay muted loop playsInline
+                  poster={item.cover_image ?? item.thumbnail ?? undefined} />
+              </div>
+            )}
+
             {gallery.length > 0 && (
               <div className="dv-gallery">
                 {gallery.map((src) => (
