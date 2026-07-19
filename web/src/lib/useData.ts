@@ -187,3 +187,30 @@ export async function deleteItem(id: string): Promise<void> {
   const { error } = await supabase.from("credential_items").delete().eq("id", id);
   if (error) throw new Error(error.message);
 }
+
+/* ── 접속 로그 ── */
+export interface AccessRow {
+  id: string;
+  user_email: string;
+  accessed_at: string;
+  path: string | null;
+  user_agent: string | null;
+}
+
+/** 접속 기록 (fire-and-forget — 실패해도 앱에 영향 없음) */
+export async function logAccess(email: string, path: string): Promise<void> {
+  try {
+    await supabase.from("credential_access_log").insert({ user_email: email, path, user_agent: navigator.userAgent });
+  } catch { /* 로깅 실패는 무시 */ }
+}
+
+/** 접속 로그 조회 (관리자만 — RLS 로 통제) */
+export async function fetchAccessLog(limit = 500): Promise<AccessRow[]> {
+  const { data, error } = await supabase
+    .from("credential_access_log")
+    .select("*")
+    .order("accessed_at", { ascending: false })
+    .range(0, limit - 1);
+  if (error) throw new Error(error.message);
+  return (data as AccessRow[]) ?? [];
+}

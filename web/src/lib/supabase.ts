@@ -9,3 +9,7 @@ const ANON =
 export const supabase = createClient(URL, ANON);
 
 export const isMadupEmail = (email?: string | null) => !!email && email.endsWith("@madup.com");
+
+// 접속 로그 등 관리자 전용 기능 열람 허용 이메일 (RLS is_credential_admin() 와 동일하게 유지)
+export const ADMIN_EMAILS = ["jwsuk@madup.com"];
+export const isAdminEmail = (email?: string | null) => !!email && ADMIN_EMAILS.includes(email);
