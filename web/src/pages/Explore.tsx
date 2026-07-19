@@ -76,7 +76,11 @@ export function Explore({ items, loading, filters, setFilters, staff, ready, ema
   // TEMP-DEV: 로그인 없는 로컬 dev 에서 UI 확인용 샘플 (프로덕션 번들에선 제거됨)
   const devPreview = import.meta.env.DEV && ready && !staff;
   const pool = devPreview ? (devSample as unknown as Item[]) : items;
-  const filtered = useMemo(() => applyFilters(pool, filters), [pool, filters]);
+  // PD(촬영) 소스는 후순위로 (비PD 먼저 → PD 뒤). 그룹 내 순서는 기존 최신순 유지(안정 정렬)
+  const filtered = useMemo(() => {
+    const list = applyFilters(pool, filters);
+    return [...list].sort((a, b) => (a.source_team === "PD" ? 1 : 0) - (b.source_team === "PD" ? 1 : 0));
+  }, [pool, filters]);
 
   if (!ready) return <div className="container grid">{Array.from({ length: 6 }, (_, i) => <div key={i} className="skel" />)}</div>;
   if (!staff && !devPreview) return <LoginGate />;
