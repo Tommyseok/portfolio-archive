@@ -194,6 +194,7 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
   const [linkRows, setLinkRows] = useState<{ label: string; url: string }[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [lb, setLb] = useState<number | null>(null); // 라이트박스 현재 이미지 인덱스
 
   useEffect(() => {
     if (!item) return;
@@ -219,15 +220,25 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
     setDetailVideo(item.detail_video ?? "");
     setCardMedia(item.card_media ?? "");
     setLinkRows(item.custom_links ?? []);
+    setLb(null);
   }, [item]);
 
   useEffect(() => {
     if (!item) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const n = detailGallery(item).length;
+    const onKey = (e: KeyboardEvent) => {
+      if (lb !== null) { // 라이트박스가 열려 있으면 화살표 이동 / Esc 로 닫기 (모달은 유지)
+        if (e.key === "Escape") setLb(null);
+        else if (e.key === "ArrowRight") setLb((i) => (i === null ? i : (i + 1) % n));
+        else if (e.key === "ArrowLeft") setLb((i) => (i === null ? i : (i - 1 + n) % n));
+        return;
+      }
+      if (e.key === "Escape") onClose();
+    };
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
-  }, [item, onClose]);
+  }, [item, onClose, lb]);
 
   if (!item) return null;
 
@@ -354,8 +365,10 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
 
             {gallery.length > 0 && (
               <div className="dv-gallery">
-                {gallery.map((src) => (
-                  <a key={src} href={src} target="_blank" rel="noreferrer"><img src={src} alt={item.client} loading="lazy" /></a>
+                {gallery.map((src, i) => (
+                  <button key={src} type="button" onClick={() => setLb(i)}>
+                    <img src={src} alt={item.client} loading="lazy" />
+                  </button>
                 ))}
               </div>
             )}
@@ -545,6 +558,25 @@ export function DetailView({ item, onClose, staff, email, onSaved, likers = [], 
               <button className="dv-btn accent" onClick={() => void save()} disabled={busy}>{busy ? "저장 중…" : "저장"}</button>
               <button className="dv-btn" onClick={() => setEdit(false)} disabled={busy}>취소</button>
               {isManual && <button className="dv-btn" style={{ marginLeft: "auto", color: "#ff6b81", borderColor: "rgba(255,107,129,.5)" }} onClick={() => void removeThisItem()} disabled={busy}>항목 삭제</button>}
+            </div>
+          </div>
+        )}
+
+        {lb !== null && gallery[lb] && (
+          <div className="lightbox" onClick={() => setLb(null)}>
+            <button className="lb-close" onClick={(e) => { e.stopPropagation(); setLb(null); }} aria-label="닫기">✕</button>
+            {gallery.length > 1 && <button className="lb-nav prev" onClick={(e) => { e.stopPropagation(); setLb((lb - 1 + gallery.length) % gallery.length); }} aria-label="이전">‹</button>}
+            <img className="lb-img" src={gallery[lb]} alt="" onClick={(e) => e.stopPropagation()} />
+            {gallery.length > 1 && <button className="lb-nav next" onClick={(e) => { e.stopPropagation(); setLb((lb + 1) % gallery.length); }} aria-label="다음">›</button>}
+            <div className="lb-bottom" onClick={(e) => e.stopPropagation()}>
+              <div className="lb-count">{lb + 1} / {gallery.length}</div>
+              {gallery.length > 1 && (
+                <div className="lb-dots">
+                  {gallery.map((_, i) => (
+                    <button key={i} className={"lb-dot" + (i === lb ? " on" : "")} onClick={() => setLb(i)} aria-label={`이미지 ${i + 1}`} />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

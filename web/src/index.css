@@ -823,9 +823,23 @@ img { max-width: 100%; }
 .dv-video { margin-bottom: 16px; }
 .dv-video video { max-width: min(900px, 100%); max-height: 72vh; border-radius: 12px; background: #000; display: block; }
 .dv-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.dv-gallery a { display: block; }
-.dv-gallery img { width: 100%; aspect-ratio: 9/13; object-fit: cover; display: block; }
+.dv-gallery a, .dv-gallery button { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.dv-gallery img { width: 100%; aspect-ratio: 9/13; object-fit: cover; display: block; transition: opacity 0.2s var(--ease); }
+.dv-gallery button:hover img { opacity: 0.9; }
 @media (max-width: 720px) { .dv-gallery { grid-template-columns: 1fr 1fr; } }
+
+/* 라이트박스 (같은 창에서 크게 보기 + 화살표/도트 이동) */
+.lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; }
+.lb-img { max-width: 92vw; max-height: 84vh; object-fit: contain; border-radius: 6px; cursor: default; }
+.lb-close { position: absolute; top: 20px; right: 24px; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.22); background: rgba(255,255,255,0.08); color: #fff; font-size: 17px; cursor: pointer; }
+.lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 52px; height: 52px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.22); background: rgba(255,255,255,0.08); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.lb-nav.prev { left: 24px; } .lb-nav.next { right: 24px; }
+.lb-nav:hover, .lb-close:hover { background: rgba(255,255,255,0.2); }
+.lb-bottom { position: absolute; bottom: 22px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.lb-count { color: rgba(255,255,255,0.85); font-size: 13px; font-family: var(--mono); }
+.lb-dots { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 80vw; }
+.lb-dot { width: 8px; height: 8px; border-radius: 50%; border: 0; padding: 0; background: rgba(255,255,255,0.32); cursor: pointer; transition: background 0.2s var(--ease); }
+.lb-dot.on { background: #fff; }
 
 .dv-links { margin-top: 30px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.14); }
 .dv-links .lbl { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #7a7c82; margin-bottom: 14px; }
