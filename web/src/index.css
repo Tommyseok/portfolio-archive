@@ -371,7 +371,7 @@ img { max-width: 100%; }
   font-size: clamp(17px, 1.7vw, 24px);
   font-weight: 500; line-height: 1.62; color: var(--ink-2);
 }
-.midstate-body em { font-style: normal; color: var(--accent); font-weight: 700; }
+.midstate-body em { font-family: var(--serif); font-style: italic; font-weight: 400; color: inherit; }
 /* 순차 리빌 */
 .midstate-eyebrow, .midstate-title, .midstate-body {
   opacity: 0; transform: translateY(20px);
