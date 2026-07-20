@@ -822,11 +822,12 @@ img { max-width: 100%; }
 /* 상세 뷰 인라인 동영상 플레이어 — 원본 비율 그대로(크롭 없음) */
 .dv-video { margin-bottom: 16px; }
 .dv-video video { max-width: min(900px, 100%); max-height: 72vh; border-radius: 12px; background: #000; display: block; }
-.dv-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.dv-gallery a, .dv-gallery button { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
-.dv-gallery img { width: 100%; aspect-ratio: 9/13; object-fit: cover; display: block; transition: opacity 0.2s var(--ease); }
+/* 원본 비율 그대로(크롭 없이) — 높이 제각각이라 컬럼(메이슨리) 배치로 빈틈 없이 */
+.dv-gallery { columns: 3; column-gap: 14px; }
+.dv-gallery a, .dv-gallery button { display: block; width: 100%; margin: 0 0 14px; break-inside: avoid; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.dv-gallery img { width: 100%; height: auto; display: block; transition: opacity 0.2s var(--ease); }
 .dv-gallery button:hover img { opacity: 0.9; }
-@media (max-width: 720px) { .dv-gallery { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 720px) { .dv-gallery { columns: 2; } }
 
 /* 라이트박스 (같은 창에서 크게 보기 + 화살표/도트 이동) */
 .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; }
